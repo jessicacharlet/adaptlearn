@@ -1,0 +1,37 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="88" y1="56" x2="420" y2="448" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1B7BFF"/>
+      <stop offset="0.5" stop-color="#7A5CFF"/>
+      <stop offset="1" stop-color="#FF7A2F"/>
+    </linearGradient>
+    <linearGradient id="ringGradient" x1="116" y1="104" x2="398" y2="404" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9EE6FF"/>
+      <stop offset="0.5" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#FFE27A"/>
+    </linearGradient>
+    <linearGradient id="sparkGradient" x1="164" y1="140" x2="344" y2="338" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DF9C6"/>
+      <stop offset="1" stop-color="#1CE3FF"/>
+    </linearGradient>
+    <filter id="softGlow" x="42" y="24" width="428" height="444" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="14" result="effect1_foregroundBlur"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#softGlow)">
+    <rect x="72" y="56" width="368" height="368" rx="112" fill="url(#bgGradient)"/>
+    <circle cx="256" cy="240" r="112" stroke="url(#ringGradient)" stroke-width="22" opacity="0.95"/>
+    <path d="M178 289C203.5 247.5 230.5 226.5 257 226.5C286.5 226.5 311.5 250 334 289" stroke="white" stroke-width="20" stroke-linecap="round"/>
+    <path d="M193 211C193 178.415 219.415 152 252 152H259C291.585 152 318 178.415 318 211V219H193V211Z" fill="white" opacity="0.96"/>
+    <path d="M215 190.5C222.5 178 236.5 169 252.5 169C269.5 169 284.5 178.5 292 191.5" stroke="url(#sparkGradient)" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="198" cy="170" r="13" fill="#7DF9C6"/>
+    <circle cx="322" cy="178" r="11" fill="#FFE27A"/>
+    <circle cx="338" cy="291" r="12" fill="#FFB36B"/>
+    <circle cx="173" cy="289" r="10" fill="#8CE4FF"/>
+    <path d="M237 266L255 238L273 266L305 271L282 294L288 326L255 309L222 326L228 294L205 271L237 266Z" fill="url(#sparkGradient)"/>
+    <path d="M123 369C170 332.333 214.333 314 256 314C297.667 314 342 332.333 389 369" stroke="white" stroke-width="16" stroke-linecap="round" opacity="0.8"/>
+  </g>
+</svg>

@@ -9,6 +9,7 @@ import {
   LinearScale,
   Tooltip,
 } from "chart.js";
+import adaptLearnLogo from "./assets/adaptlearn-logo.svg";
 
 Chart.register(
   ArcElement,
@@ -24,6 +25,7 @@ const pageIntro = {
   home: "This is the home page. You can review the project and start the assessment.",
   login: "This is the login page. Enter your name and student ID, or use the microphone to fill them.",
   behavioral: "This page checks learning interaction patterns using media and typed responses.",
+  timed: "This page checks typing pace, ordering, memory, audio recall, and short comprehension using a multi-task support module.",
   assessment: "This page contains the learning habit questions. Use the slider or microphone to answer.",
   subject: "This page asks about your subject preferences and study methods.",
   dashboard: "This page shows your predicted learning style and model confidence.",
@@ -36,9 +38,10 @@ const progressMap = {
   home: 0,
   login: 15,
   behavioral: 30,
-  assessment: 45,
-  subject: 65,
-  dashboard: 85,
+  timed: 42,
+  assessment: 55,
+  subject: 70,
+  dashboard: 86,
   recommendation: 95,
   analytics: 100,
   report: 100,
@@ -105,7 +108,9 @@ const interactionLessons = [
     topic: "Understanding Gravity",
     summary: "Gravity pulls objects toward Earth. Watch and respond with a short explanation.",
     prompt: "In one or two lines, explain how gravity works.",
-    visual: "Earth, apple, and falling motion",
+    visual: "Gravity concept: Earth, apple, and falling motion",
+    videoSrc: "https://assets.science.nasa.gov/content/dam/science/cds/eclips/assets/videos/spotlite-mass-and-weight/video.mp4",
+    videoType: "video",
   },
   {
     id: 2,
@@ -113,6 +118,8 @@ const interactionLessons = [
     summary: "Observe the sequence and type one part of the cycle you remember.",
     prompt: "Describe one stage of the water cycle.",
     visual: "Cloud, rain, river, and sun cycle",
+    videoSrc: "https://gpm.nasa.gov/education/sites/default/files/videos/WaterCycleMovie-NoText.mp4",
+    videoType: "video",
   },
 ];
 
@@ -166,12 +173,33 @@ const toolkitMap = {
   ],
 };
 
-const pageOrder = ["home", "login", "behavioral", "assessment", "subject", "dashboard", "recommendation", "analytics", "report"];
+const pageOrder = ["home", "login", "behavioral", "timed", "assessment", "subject", "dashboard", "recommendation", "analytics", "report"];
 const heroHighlights = [
   { eyebrow: "Adaptive", title: "Context-aware flow", text: "The interface changes naturally from onboarding to prediction to analytics without feeling like separate pages." },
   { eyebrow: "Accessible", title: "Voice-first support", text: "Microphone input and voice guidance are woven into the workflow instead of feeling like an afterthought." },
 ];
 const metricThemes = ["blue", "orange", "green", "pink", "violet", "gold"];
+const timedChallengePrompt = "Plants need sunlight, water, and air to grow strong every day. Their roots absorb water from the soil, while the leaves use sunlight to make food. If a plant does not get enough light or water, it may grow slowly or become weak.";
+const timedChallengeDuration = 45;
+const orderingTarget = ["Seed", "Sprout", "Leaf Growth", "Flower"];
+const memoryWords = ["moon", "tree", "key", "river", "star"];
+const memoryRevealDuration = 12;
+const audioRecallContent = {
+  script: "The blue bus stopped near the library at four o clock after the students finished class.",
+  question: "What stopped near the library, and when did it stop?",
+  keywords: ["bus", "library", "four"],
+};
+const comprehensionContent = {
+  passage: "Mina learns best when she studies in short, quiet sessions with clear notes and small breaks between tasks.",
+  question: "Which environment helps Mina most?",
+  options: [
+    "A noisy room with television in the background",
+    "Short and quiet study sessions with clear notes",
+    "Last-minute study with no breaks",
+    "Skipping revision and only watching entertainment videos",
+  ],
+  correct: "Short and quiet study sessions with clear notes",
+};
 
 function mockPrediction(answers) {
   const v = answers.video_actions || 0;
@@ -185,6 +213,171 @@ function mockPrediction(answers) {
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function calculateTextAccuracy(target, response) {
+  const source = target.trim().toLowerCase();
+  const typed = response.trim().toLowerCase();
+  if (!source.length && !typed.length) return 100;
+  if (!typed.length) return 0;
+
+  const maxLength = Math.max(source.length, typed.length);
+  let matches = 0;
+
+  for (let index = 0; index < Math.min(source.length, typed.length); index += 1) {
+    if (source[index] === typed[index]) matches += 1;
+  }
+
+  return Math.round((matches / maxLength) * 100);
+}
+
+function shuffleArray(items) {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [copy[index], copy[swapIndex]] = [copy[swapIndex], copy[index]];
+  }
+  return copy;
+}
+
+function createOrderingTask() {
+  return {
+    items: shuffleArray(orderingTarget),
+    dragIndex: null,
+    completed: false,
+    attempts: 0,
+    score: 0,
+  };
+}
+
+function createMemoryTask() {
+  return {
+    phase: "idle",
+    remainingSeconds: memoryRevealDuration,
+    response: "",
+    completed: false,
+    score: 0,
+    recalledWords: 0,
+  };
+}
+
+function scoreKeywordRecall(response, keywords) {
+  const text = response.toLowerCase();
+  const matches = keywords.filter((keyword) => text.includes(keyword)).length;
+  return {
+    matches,
+    score: Math.round((matches / keywords.length) * 100),
+  };
+}
+
+const featureMeta = {
+  hand_raise: {
+    label: "Class Participation",
+    focus: "How actively the student speaks up or asks questions during class.",
+  },
+  resource_visits: {
+    label: "Learning Resource Use",
+    focus: "How often the student opens online study materials or learning resources.",
+  },
+  announcement_views: {
+    label: "Announcement Checking",
+    focus: "How regularly the student follows updates, notices, and academic reminders.",
+  },
+  discussion_posts: {
+    label: "Discussion Activity",
+    focus: "How often the student joins discussions or responds in learning forums.",
+  },
+  free_time: {
+    label: "Free Time",
+    focus: "Available time outside study that may affect routine and balance.",
+    unit: "hrs/day",
+  },
+  study_time: {
+    label: "Study Time",
+    focus: "Average daily time spent on study or revision.",
+    unit: "hrs/day",
+  },
+  absences: {
+    label: "Absences",
+    focus: "Classes missed recently. Higher values may reduce continuity and classroom confidence.",
+    unit: "days",
+  },
+  final_grade: {
+    label: "Recent Grade",
+    focus: "Most recent academic result used to understand current performance level.",
+    unit: "%",
+  },
+  total_actions: {
+    label: "Overall Platform Activity",
+    focus: "Combined activity across the learning platform, showing total engagement.",
+  },
+  video_actions: {
+    label: "Video Learning Use",
+    focus: "How much the student uses video-based learning materials.",
+  },
+  audio_actions: {
+    label: "Audio Learning Use",
+    focus: "How much the student uses audio lessons or listening-based study support.",
+  },
+  text_actions: {
+    label: "Text Learning Use",
+    focus: "How much the student uses reading, notes, or written materials.",
+  },
+};
+
+function formatFeatureValue(key, value) {
+  const meta = featureMeta[key];
+  if (!meta?.unit) return Math.round(value);
+  return `${Math.round(value)} ${meta.unit}`;
+}
+
+function describeFeatureReading(key, value) {
+  if (key === "absences") {
+    if (value >= 10) return "Needs attention: the student is missing many classes.";
+    if (value >= 5) return "Watch closely: attendance is becoming inconsistent.";
+    return "Stable: attendance is mostly regular.";
+  }
+
+  if (key === "final_grade") {
+    if (value >= 75) return "Strong: academic performance is currently healthy.";
+    if (value >= 50) return "Developing: the student is managing but may need reinforcement.";
+    return "Needs support: recent academic score is low.";
+  }
+
+  if (key === "study_time") {
+    if (value >= 4) return "Good routine: the student is spending consistent time studying.";
+    if (value >= 2) return "Moderate routine: study time is present but may need structure.";
+    return "Low routine: study time may not be enough for steady progress.";
+  }
+
+  if (key === "free_time") {
+    if (value >= 5) return "Balanced: there is enough personal time alongside study.";
+    if (value >= 2) return "Limited free time: routine may feel busy.";
+    return "Very low free time: the student may need better rest-study balance.";
+  }
+
+  if (value >= 70) return "Strong engagement in this area.";
+  if (value >= 40) return "Moderate engagement in this area.";
+  return "Low engagement in this area.";
+}
+
+function buildFeatureRows(answers) {
+  return Object.entries(answers)
+    .filter(([key]) => key !== "platform_Unknown")
+    .map(([key, value]) => {
+      const meta = featureMeta[key] || {
+        label: key.replaceAll("_", " "),
+        focus: "Assessment signal used by the model.",
+      };
+
+      return {
+        key,
+        label: meta.label,
+        value: formatFeatureValue(key, value),
+        focus: meta.focus,
+        reading: describeFeatureReading(key, value),
+      };
+    });
 }
 
 export default function App() {
@@ -212,6 +405,32 @@ export default function App() {
     taskPauseDurations: [],
     inference: "Pending",
   });
+  const [timedChallenge, setTimedChallenge] = useState({
+    prompt: timedChallengePrompt,
+    response: "",
+    running: false,
+    completed: false,
+    remainingSeconds: timedChallengeDuration,
+    startedAt: null,
+    finishedAt: null,
+    keystrokes: [],
+    pauseDurations: [],
+    backspaceCount: 0,
+    inference: "Pending",
+  });
+  const [orderingTask, setOrderingTask] = useState(createOrderingTask);
+  const [memoryTask, setMemoryTask] = useState(createMemoryTask);
+  const [audioTask, setAudioTask] = useState({
+    played: 0,
+    response: "",
+    completed: false,
+    score: 0,
+  });
+  const [comprehensionTask, setComprehensionTask] = useState({
+    selected: "",
+    completed: false,
+    score: 0,
+  });
 
   const recognitionRef = useRef(null);
   const styleChartRef = useRef(null);
@@ -232,6 +451,15 @@ export default function App() {
   const toolkit = toolkitMap[student.learningStyle || "Visual"];
   const progress = progressMap[page] || 0;
   const behaviorInsights = buildBehaviorInsights(behaviorData);
+  const timedChallengeInsights = buildTimedChallengeInsights(timedChallenge);
+  const supportCheckInsights = buildSupportCheckInsights(
+    timedChallengeInsights,
+    orderingTask,
+    memoryTask,
+    audioTask,
+    comprehensionTask
+  );
+  const supportTasksCompleted = timedChallenge.completed && orderingTask.completed && memoryTask.completed && audioTask.completed && comprehensionTask.completed;
 
   const speakText = (text, force = false) => {
     if (!("speechSynthesis" in window)) return;
@@ -409,6 +637,44 @@ export default function App() {
     return () => datasetMetricChartInstance.current?.destroy();
   }, [page, datasetSummary]);
 
+  useEffect(() => {
+    if (page !== "timed" || !timedChallenge.running) return undefined;
+    if (timedChallenge.remainingSeconds <= 0) {
+      finalizeTimedChallenge(true);
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setTimedChallenge((prev) => ({
+        ...prev,
+        remainingSeconds: prev.remainingSeconds - 1,
+      }));
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [page, timedChallenge.running, timedChallenge.remainingSeconds]);
+
+  useEffect(() => {
+    if (page !== "timed" || memoryTask.phase !== "reveal") return undefined;
+    if (memoryTask.remainingSeconds <= 0) {
+      setMemoryTask((prev) => ({
+        ...prev,
+        phase: "answer",
+        remainingSeconds: 0,
+      }));
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setMemoryTask((prev) => ({
+        ...prev,
+        remainingSeconds: prev.remainingSeconds - 1,
+      }));
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [page, memoryTask.phase, memoryTask.remainingSeconds]);
+
   const startRecognition = () => {
     if (!recognitionRef.current) {
       setVoiceStatus("Voice input is not supported in this browser.");
@@ -449,6 +715,10 @@ export default function App() {
       setVoiceContext("assessment");
       setVoiceStatus("Say a number, or say next or back.");
       speakText("Say a number, or say next or back.", true);
+    } else if (page === "timed") {
+      setVoiceContext("timed");
+      setVoiceStatus("Say the sentence and I will add it to the timed response box.");
+      speakText("Say the sentence and I will add it to the timed response box.", true);
     } else if (page === "subject") {
       const pending = subjectGroups.find((group) => !student[group.key]);
       setVoiceContext("subject");
@@ -457,7 +727,7 @@ export default function App() {
       speakText(prompt, true);
     } else {
       setVoiceContext("navigation");
-      const prompt = "Say a page name like home, login, assessment, dashboard, recommendation, or analytics.";
+      const prompt = "Say a page name like home, login, timed, assessment, dashboard, recommendation, or analytics.";
       setVoiceStatus(prompt);
       speakText(prompt, true);
     }
@@ -513,6 +783,12 @@ export default function App() {
       return;
     }
 
+    if (voiceContext === "timed") {
+      setTimedChallenge((prev) => ({ ...prev, response: `${prev.response} ${transcript}`.trim() }));
+      setVoiceStatus("Timed response updated.");
+      return;
+    }
+
     if (voiceContext === "subject") {
       const pending = subjectGroups.find((group) => !student[group.key]);
       if (!pending) return setVoiceStatus("All subject preferences are already selected.");
@@ -528,11 +804,12 @@ export default function App() {
     const lower = transcript.toLowerCase();
     if (lower.includes("home")) setPage("home");
     else if (lower.includes("login")) setPage("login");
+    else if (lower.includes("timed")) setPage("timed");
     else if (lower.includes("assessment")) setPage("assessment");
     else if (lower.includes("dashboard")) setPage("dashboard");
     else if (lower.includes("recommendation")) setPage("recommendation");
     else if (lower.includes("analytic")) setPage("analytics");
-    else setVoiceStatus("Try saying home, login, assessment, dashboard, recommendation, or analytics.");
+    else setVoiceStatus("Try saying home, login, timed, assessment, dashboard, recommendation, or analytics.");
   };
 
   const nextQuestion = () => {
@@ -578,6 +855,32 @@ export default function App() {
       taskKeystrokes: [],
       taskPauseDurations: [],
       inference: "Pending",
+    });
+    setTimedChallenge({
+      prompt: timedChallengePrompt,
+      response: "",
+      running: false,
+      completed: false,
+      remainingSeconds: timedChallengeDuration,
+      startedAt: null,
+      finishedAt: null,
+      keystrokes: [],
+      pauseDurations: [],
+      backspaceCount: 0,
+      inference: "Pending",
+    });
+    setOrderingTask(createOrderingTask());
+    setMemoryTask(createMemoryTask());
+    setAudioTask({
+      played: 0,
+      response: "",
+      completed: false,
+      score: 0,
+    });
+    setComprehensionTask({
+      selected: "",
+      completed: false,
+      score: 0,
     });
     setPage("behavioral");
   };
@@ -659,7 +962,168 @@ export default function App() {
       return;
     }
 
+    setPage("timed");
+  };
+
+  const startTimedChallenge = () => {
+    lastKeystrokeTimeRef.current = Date.now();
+    setTimedChallenge({
+      prompt: timedChallengePrompt,
+      response: "",
+      running: true,
+      completed: false,
+      remainingSeconds: timedChallengeDuration,
+      startedAt: Date.now(),
+      finishedAt: null,
+      keystrokes: [],
+      pauseDurations: [],
+      backspaceCount: 0,
+      inference: "Running",
+    });
+    setVoiceStatus("Timed typing task started. Type the sentence before the timer ends.");
+  };
+
+  const handleTimedChallengeInput = (value) => {
+    if (!timedChallenge.running) return;
+    const now = Date.now();
+    const pause = now - lastKeystrokeTimeRef.current;
+
+    setTimedChallenge((prev) => ({
+      ...prev,
+      response: value,
+      backspaceCount: value.length < prev.response.length ? prev.backspaceCount + 1 : prev.backspaceCount,
+      keystrokes: [...prev.keystrokes, now],
+      pauseDurations: pause > 700 ? [...prev.pauseDurations, pause] : prev.pauseDurations,
+    }));
+
+    setBehaviorData((prev) => ({
+      ...prev,
+      backspaceCount: value.length < timedChallenge.response.length ? prev.backspaceCount + 1 : prev.backspaceCount,
+      keystrokes: [...prev.keystrokes, now],
+      pauseDurations: pause > 700 ? [...prev.pauseDurations, pause] : prev.pauseDurations,
+      typedCharacters: prev.typedCharacters + Math.max(0, value.length - timedChallenge.response.length),
+    }));
+
+    lastKeystrokeTimeRef.current = now;
+  };
+
+  const finalizeTimedChallenge = (timedOut = false) => {
+    setTimedChallenge((prev) => {
+      const finishedAt = Date.now();
+      const elapsedMs = prev.startedAt ? Math.max(1000, finishedAt - prev.startedAt) : timedChallengeDuration * 1000;
+      const averagePause = prev.pauseDurations.length
+        ? Math.round(prev.pauseDurations.reduce((sum, item) => sum + item, 0) / prev.pauseDurations.length)
+        : 0;
+      const accuracy = calculateTextAccuracy(prev.prompt, prev.response);
+      const charsPerMinute = Math.round((prev.response.trim().length / elapsedMs) * 60000);
+      const completionRatio = Math.round((prev.response.trim().length / prev.prompt.length) * 100);
+
+      let inference = "Balanced timed response";
+      if (timedOut && completionRatio < 70) {
+        inference = "May need extended processing time";
+      } else if (averagePause >= 2200 || charsPerMinute < 55) {
+        inference = "Slow and reflective processing pattern";
+      } else if (prev.backspaceCount >= 6) {
+        inference = "Careful but correction-heavy typing";
+      } else if (accuracy >= 80 && charsPerMinute >= 90) {
+        inference = "Comfortable timed typing";
+      }
+
+      return {
+        ...prev,
+        running: false,
+        completed: true,
+        finishedAt,
+        remainingSeconds: 0,
+        inference,
+        accuracy,
+        charsPerMinute,
+        completionRatio,
+        averagePause,
+        timedOut,
+      };
+    });
+  };
+
+  const continueFromTimedChallenge = () => {
+    if (!supportTasksCompleted) {
+      setVoiceStatus("Please complete all support tasks before continuing.");
+      return;
+    }
     setPage("assessment");
+  };
+
+  const handleOrderingDragStart = (index) => {
+    setOrderingTask((prev) => ({ ...prev, dragIndex: index }));
+  };
+
+  const handleOrderingDrop = (dropIndex) => {
+    setOrderingTask((prev) => {
+      if (prev.dragIndex === null || prev.dragIndex === dropIndex) return prev;
+      const items = [...prev.items];
+      const [movedItem] = items.splice(prev.dragIndex, 1);
+      items.splice(dropIndex, 0, movedItem);
+      return {
+        ...prev,
+        items,
+        dragIndex: null,
+      };
+    });
+  };
+
+  const submitOrderingTask = () => {
+    const correctPositions = orderingTask.items.filter((item, index) => item === orderingTarget[index]).length;
+    setOrderingTask((prev) => ({
+      ...prev,
+      completed: true,
+      attempts: prev.attempts + 1,
+      score: Math.round((correctPositions / orderingTarget.length) * 100),
+      dragIndex: null,
+    }));
+  };
+
+  const startMemoryTask = () => {
+    setMemoryTask({
+      phase: "reveal",
+      remainingSeconds: memoryRevealDuration,
+      response: "",
+      completed: false,
+      score: 0,
+      recalledWords: 0,
+    });
+  };
+
+  const submitMemoryTask = () => {
+    const recall = scoreKeywordRecall(memoryTask.response, memoryWords);
+    setMemoryTask((prev) => ({
+      ...prev,
+      phase: "completed",
+      completed: true,
+      score: recall.score,
+      recalledWords: recall.matches,
+    }));
+  };
+
+  const playAudioPrompt = () => {
+    setAudioTask((prev) => ({ ...prev, played: prev.played + 1 }));
+    speakText(audioRecallContent.script, true);
+  };
+
+  const submitAudioTask = () => {
+    const recall = scoreKeywordRecall(audioTask.response, audioRecallContent.keywords);
+    setAudioTask((prev) => ({
+      ...prev,
+      completed: true,
+      score: recall.score,
+    }));
+  };
+
+  const selectComprehensionOption = (option) => {
+    setComprehensionTask({
+      selected: option,
+      completed: true,
+      score: option === comprehensionContent.correct ? 100 : 25,
+    });
   };
 
   const analyzeResults = async () => {
@@ -724,6 +1188,7 @@ export default function App() {
         student_name: student.name,
         report_summary: reportSummary,
         behavior_insights: behaviorInsights,
+        support_check: supportCheckInsights,
         student_snapshot: {
           favoriteSubject: student.favoriteSubject,
           difficultSubject: student.difficultSubject,
@@ -746,29 +1211,25 @@ export default function App() {
       body: JSON.stringify({
         student_id: student.id,
         student_name: student.name,
-        page: "behavioral-to-assessment",
+        page: "behavioral-and-timed-to-assessment",
         behavior_data: behaviorData,
         verification_data: behaviorVerification,
+        support_check: supportCheckInsights,
       }),
     }).catch(() => null);
   }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const featureRows = Object.entries(answers).map(([key, value]) => {
-    const category = key.includes("actions") ? "Engagement" : key.includes("time") ? "Time" : "Academic";
-    const impact = value > 70 ? "High" : value > 30 ? "Medium" : "Low";
-    return { key, value, category, impact };
-  });
+  const featureRows = buildFeatureRows(answers);
 
-  const reportSummary = buildReportSummary(student, answers, behaviorInsights);
+  const reportSummary = buildReportSummary(student, answers, behaviorInsights, supportCheckInsights);
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <div className="brand-mark">A</div>
+          <img className="brand-logo" src={adaptLearnLogo} alt="AdaptLearn logo" />
           <div>
             <h1>AdaptLearn</h1>
-            <p>React Frontend for Final Year Project</p>
           </div>
         </div>
         <div className="progress-wrapper">
@@ -891,9 +1352,29 @@ export default function App() {
               <div className="behavior-layout">
                 <div className="behavior-media-card">
                   <div className="behavior-visual">{currentInteractionLesson.visual}</div>
+                  <div className="behavior-video-frame">
+                    {currentInteractionLesson.videoType === "video" ? (
+                      <video
+                        controls
+                        preload="metadata"
+                        onPlay={() => handleBehaviorMedia("play")}
+                      >
+                        <source src={currentInteractionLesson.videoSrc} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    ) : (
+                      <iframe
+                        src={currentInteractionLesson.videoSrc}
+                        title={`${currentInteractionLesson.topic} video`}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    )}
+                  </div>
                   <div className="behavior-media-actions">
-                    <button className="secondary-btn" onClick={() => handleBehaviorMedia("play")}>Play Video</button>
-                    <button className="secondary-btn" onClick={() => handleBehaviorMedia("replay")}>Replay</button>
+                    <button className="secondary-btn" onClick={() => handleBehaviorMedia("play")}>Mark Video Watched</button>
+                    <button className="secondary-btn" onClick={() => handleBehaviorMedia("replay")}>Replay Support</button>
                     <button className="secondary-btn" onClick={() => handleBehaviorMedia("image")}>Inspect Visual</button>
                   </div>
                   <div className="behavior-mini-stats">
@@ -930,12 +1411,207 @@ export default function App() {
           </section>
         )}
 
+        {page === "timed" && (
+          <section className="page-section">
+            <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro.timed, true)}>Listen</button></div>
+            <div className="timed-header-card">
+              <div>
+                <div className="section-chip-row">
+                  <span className="section-chip">Step 3</span>
+                  <span className="section-chip ghost">Multi-task support check</span>
+                </div>
+                <h2>Multi-Task Behavioral Support Check</h2>
+                <p>
+                  These short tasks are not mark-based tests. They help the system observe processing pace,
+                  ordering comfort, memory recall, listening recall, and short comprehension support needs.
+                </p>
+              </div>
+              <div className={`timer-badge ${timedChallenge.running ? "running" : ""}`}>
+                <span>Tasks Complete</span>
+                <strong>{[timedChallenge.completed, orderingTask.completed, memoryTask.completed, audioTask.completed, comprehensionTask.completed].filter(Boolean).length}/5</strong>
+              </div>
+            </div>
+
+            <div className="timed-layout">
+              <div className="timed-card">
+                <h3>Copy This Sentence</h3>
+                <p className="timed-helper">Type the sentence below as accurately as you can before the timer ends.</p>
+                <div className="timed-prompt-box">{timedChallenge.prompt}</div>
+                <div className="inline-actions">
+                  {!timedChallenge.running && !timedChallenge.completed && (
+                    <button className="primary-btn" onClick={startTimedChallenge}>Start 45 Second Task</button>
+                  )}
+                  {timedChallenge.running && (
+                    <button className="secondary-btn" onClick={() => finalizeTimedChallenge(false)}>Finish Now</button>
+                  )}
+                  {timedChallenge.completed && (
+                    <button className="secondary-btn" onClick={startTimedChallenge}>Try Again</button>
+                  )}
+                </div>
+              </div>
+
+              <div className="timed-card">
+                <h3>Student Response</h3>
+                <textarea
+                  className="behavior-textarea timed-textarea"
+                  value={timedChallenge.response}
+                  onChange={(e) => handleTimedChallengeInput(e.target.value)}
+                  placeholder="Start the task, then type here..."
+                  disabled={!timedChallenge.running}
+                />
+                <div className="behavior-mini-stats">
+                  <span>Characters: {timedChallenge.response.trim().length}</span>
+                  <span>Backspaces: {timedChallenge.backspaceCount}</span>
+                  <span>Pauses: {timedChallenge.pauseDurations.length}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="timed-grid">
+              <div className="timed-card">
+                <h3>Drag And Drop Ordering</h3>
+                <p className="timed-helper">Arrange the plant growth stages in the correct order by dragging the cards.</p>
+                <div className="drag-list">
+                  {orderingTask.items.map((item, index) => (
+                    <div
+                      key={item}
+                      className="drag-item"
+                      draggable
+                      onDragStart={() => handleOrderingDragStart(index)}
+                      onDragOver={(event) => event.preventDefault()}
+                      onDrop={() => handleOrderingDrop(index)}
+                    >
+                      <span className="drag-handle">::</span>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+                <div className="inline-actions">
+                  <button className="secondary-btn" onClick={() => setOrderingTask(createOrderingTask())}>Shuffle Again</button>
+                  <button className="primary-btn" onClick={submitOrderingTask}>Check Order</button>
+                </div>
+                <div className="behavior-mini-stats">
+                  <span>Score: {orderingTask.score}%</span>
+                  <span>Status: {orderingTask.completed ? "Checked" : "Pending"}</span>
+                </div>
+              </div>
+
+              <div className="timed-card">
+                <h3>Memory Recall</h3>
+                <p className="timed-helper">Look at the words, remember them, and then type the ones you recall.</p>
+                {memoryTask.phase === "idle" && (
+                  <button className="primary-btn" onClick={startMemoryTask}>Start Memory Task</button>
+                )}
+                {memoryTask.phase === "reveal" && (
+                  <>
+                    <div className="memory-word-grid">
+                      {memoryWords.map((word) => <span key={word} className="memory-chip">{word}</span>)}
+                    </div>
+                    <div className="behavior-mini-stats">
+                      <span>Memorize time left: {memoryTask.remainingSeconds}s</span>
+                    </div>
+                  </>
+                )}
+                {(memoryTask.phase === "answer" || memoryTask.phase === "completed") && (
+                  <>
+                    <textarea
+                      className="behavior-textarea timed-textarea"
+                      value={memoryTask.response}
+                      onChange={(e) => setMemoryTask((prev) => ({ ...prev, response: e.target.value }))}
+                      placeholder="Type the words you remember..."
+                      disabled={memoryTask.completed}
+                    />
+                    {!memoryTask.completed && (
+                      <div className="inline-actions">
+                        <button className="primary-btn" onClick={submitMemoryTask} disabled={!memoryTask.response.trim()}>Submit Memory Recall</button>
+                      </div>
+                    )}
+                  </>
+                )}
+                <div className="behavior-mini-stats">
+                  <span>Remembered: {memoryTask.recalledWords}/{memoryWords.length}</span>
+                  <span>Score: {memoryTask.score}%</span>
+                </div>
+              </div>
+
+              <div className="timed-card">
+                <h3>Audio Recall</h3>
+                <p className="timed-helper">Listen carefully and type the key details you heard.</p>
+                <div className="inline-actions">
+                  <button className="secondary-btn" onClick={playAudioPrompt}>Play Audio Prompt</button>
+                </div>
+                <p className="timed-helper">{audioRecallContent.question}</p>
+                <textarea
+                  className="behavior-textarea timed-textarea"
+                  value={audioTask.response}
+                  onChange={(e) => setAudioTask((prev) => ({ ...prev, response: e.target.value }))}
+                  placeholder="Type what you heard..."
+                  disabled={audioTask.completed}
+                />
+                <div className="inline-actions">
+                  <button className="primary-btn" onClick={submitAudioTask} disabled={!audioTask.response.trim()}>Submit Audio Recall</button>
+                </div>
+                <div className="behavior-mini-stats">
+                  <span>Audio plays: {audioTask.played}</span>
+                  <span>Score: {audioTask.score}%</span>
+                </div>
+              </div>
+
+              <div className="timed-card">
+                <h3>Short Comprehension</h3>
+                <p className="timed-helper">{comprehensionContent.passage}</p>
+                <label className="field-label">{comprehensionContent.question}</label>
+                <div className="option-grid">
+                  {comprehensionContent.options.map((option) => (
+                    <button
+                      key={option}
+                      className={`option-card ${comprehensionTask.selected === option ? "selected" : ""}`}
+                      onClick={() => selectComprehensionOption(option)}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+                <div className="behavior-mini-stats">
+                  <span>Selected: {comprehensionTask.selected || "Pending"}</span>
+                  <span>Score: {comprehensionTask.score}%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="timed-result-card">
+              <div className="section-heading left">
+                <span className="eyebrow">Support Check Insight</span>
+                <h2>{supportCheckInsights.inference}</h2>
+                <p>{supportCheckInsights.supportMessage}</p>
+              </div>
+              <div className="tile-grid">
+                <MetricTile label="Typing" tone="blue" value={timedChallengeInsights.accuracy} />
+                <MetricTile label="Ordering" tone="orange" value={orderingTask.score} />
+                <MetricTile label="Memory" tone="green" value={memoryTask.score} />
+                <MetricTile label="Audio Recall" tone="violet" value={audioTask.score} />
+                <MetricTile label="Comprehension" tone="pink" value={comprehensionTask.score} />
+              </div>
+              <div className="support-banner subtle">
+                <strong>Interpretation:</strong> {supportCheckInsights.diagnosticNote}
+              </div>
+            </div>
+
+            <div className="inline-actions center">
+              <button className="secondary-btn" onClick={() => setPage("behavioral")}>Back</button>
+              <button className="primary-btn" onClick={continueFromTimedChallenge} disabled={!supportTasksCompleted}>
+                Continue To Questionnaire
+              </button>
+            </div>
+          </section>
+        )}
+
         {page === "assessment" && (
           <section className="page-section">
             <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro.assessment, true)}>Listen</button></div>
             <div className="question-card">
               <div className="section-chip-row">
-                <span className="section-chip">Step 2</span>
+                <span className="section-chip">Step 4</span>
                 <span className="section-chip ghost">Learning habits</span>
               </div>
               <span className="question-tag">Question {questionIndex + 1} of {questions.length}</span>
@@ -972,7 +1648,7 @@ export default function App() {
             <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro.subject, true)}>Listen</button></div>
             <div className="form-card wide">
               <div className="section-chip-row">
-                <span className="section-chip">Step 3</span>
+                <span className="section-chip">Step 5</span>
                 <span className="section-chip ghost">Preference tuning</span>
               </div>
               <h2>Subject Preferences</h2>
@@ -1031,18 +1707,19 @@ export default function App() {
             <div className="grid-two">
               <div className="info-card">
                 <h3>Study Inputs</h3>
+                <p>These indicators explain the student profile in plain language so teachers and parents can read it easily.</p>
                 <div className="table-wrap">
                   <table>
                     <thead>
-                      <tr><th>Feature</th><th>Value</th><th>Category</th><th>Impact</th></tr>
+                      <tr><th>Indicator</th><th>Student Value</th><th>What It Shows</th><th>Interpretation</th></tr>
                     </thead>
                     <tbody>
                       {featureRows.map((row) => (
                         <tr key={row.key}>
-                          <td>{row.key.replaceAll("_", " ").toUpperCase()}</td>
-                          <td>{Math.round(row.value)}</td>
-                          <td>{row.category}</td>
-                          <td>{row.impact}</td>
+                          <td>{row.label}</td>
+                          <td>{row.value}</td>
+                          <td>{row.focus}</td>
+                          <td>{row.reading}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1232,6 +1909,20 @@ export default function App() {
               </div>
             </div>
 
+            <div className="report-panel report-wide">
+              <h3>Multi-Task Support Check</h3>
+              <div className="report-list">
+                <div><span>Overall result</span><strong>{supportCheckInsights.inference}</strong></div>
+                <div><span>Typing accuracy</span><strong>{timedChallengeInsights.accuracy}%</strong></div>
+                <div><span>Ordering score</span><strong>{orderingTask.score}%</strong></div>
+                <div><span>Memory recall</span><strong>{memoryTask.score}%</strong></div>
+                <div><span>Audio recall</span><strong>{audioTask.score}%</strong></div>
+                <div><span>Comprehension score</span><strong>{comprehensionTask.score}%</strong></div>
+                <div><span>Average typing pause</span><strong>{timedChallengeInsights.averagePause} ms</strong></div>
+              </div>
+              <p>{supportCheckInsights.supportMessage}</p>
+            </div>
+
             <div className="report-grid three">
               <div className="report-panel">
                 <h3>Strengths</h3>
@@ -1329,7 +2020,7 @@ function MetricTile({ label, value, tone = "blue" }) {
   );
 }
 
-function buildReportSummary(student, answers, behaviorInsights) {
+function buildReportSummary(student, answers, behaviorInsights, supportCheckInsights) {
   const engagementScore = Math.round(((answers.video_actions || 0) + (answers.audio_actions || 0) + (answers.text_actions || 0) + (answers.resource_visits || 0) + (answers.hand_raise || 0)) / 5);
   const studyRoutine = Math.round(((answers.study_time || 0) * 8) + ((answers.announcement_views || 0) * 0.35));
   const absenceRisk = answers.absences || 0;
@@ -1362,6 +2053,10 @@ function buildReportSummary(student, answers, behaviorInsights) {
   if (behaviorInsights.backspaceRisk) concerns.push("Frequent corrections may indicate hesitation, uncertainty, or difficulty with text-heavy responses.");
   if (behaviorInsights.pauseRisk) concerns.push("Long pauses during interaction may suggest cognitive overload or the need for more processing time.");
   if (behaviorInsights.navigationRisk) concerns.push("Rapid page movement may indicate task-skipping, restlessness, or reduced sustained attention.");
+  if (supportCheckInsights.processingRisk) concerns.push("The multi-task support check suggests the student may need extended processing time during written or structured tasks.");
+  if (supportCheckInsights.accuracyRisk) concerns.push("Performance dropped under pressure across one or more short tasks, so calmer pacing may help.");
+  if (supportCheckInsights.memoryRisk) concerns.push("Memory recall under short exposure may need reinforcement through repetition and chunking.");
+  if (supportCheckInsights.audioRisk) concerns.push("Listening recall may need spoken repetition and slower verbal instruction.");
 
   actions.push(`Provide more ${student.learningStyle ? student.learningStyle.toLowerCase() : "personalized"} learning resources during revision.`);
   actions.push("Set short weekly goals and review progress consistently with the student.");
@@ -1370,6 +2065,10 @@ function buildReportSummary(student, answers, behaviorInsights) {
   if (behaviorInsights.backspaceRisk) actions.push("Reduce long written demands and provide scaffolded prompts or sentence starters.");
   if (behaviorInsights.pauseRisk) actions.push("Allow more response time and break instructions into smaller, calmer steps.");
   if (behaviorInsights.navigationRisk) actions.push("Use guided task flow with clearer step markers and fewer distractions per screen.");
+  if (supportCheckInsights.processingRisk) actions.push("Offer extra time for written responses and avoid treating slower completion as lack of understanding.");
+  if (supportCheckInsights.accuracyRisk) actions.push("Use shorter copy tasks, chunked instructions, and low-pressure text verification activities.");
+  if (supportCheckInsights.memoryRisk) actions.push("Use visual reminders, spaced repetition, and fewer items per step during recall-heavy tasks.");
+  if (supportCheckInsights.audioRisk) actions.push("Repeat verbal instructions slowly and pair them with visual cues or short written supports.");
 
   if (!strengths.length) strengths.push("The student is still building consistent learning habits, and strengths may become clearer with repeated monitoring.");
   if (!concerns.length) concerns.push("No immediate major concern is visible from the current assessment, but periodic review is still advised.");
@@ -1390,6 +2089,100 @@ function buildReportSummary(student, answers, behaviorInsights) {
     concerns,
     actions,
     supportFocus: priority === "High" ? "closer supervision, targeted remediation, and regular encouragement" : priority === "Low" ? "continued structured guidance and positive reinforcement" : "steady monitoring, clearer routines, and adaptive study strategies",
+  };
+}
+
+function buildTimedChallengeInsights(timedChallenge) {
+  const accuracy = timedChallenge.accuracy ?? calculateTextAccuracy(timedChallenge.prompt || "", timedChallenge.response || "");
+  const completionRatio = timedChallenge.completionRatio ?? Math.round((((timedChallenge.response || "").trim().length) / Math.max(1, (timedChallenge.prompt || "").length)) * 100);
+  const charsPerMinute = timedChallenge.charsPerMinute ?? 0;
+  const averagePause = timedChallenge.averagePause ?? (
+    timedChallenge.pauseDurations?.length
+      ? Math.round(timedChallenge.pauseDurations.reduce((sum, item) => sum + item, 0) / timedChallenge.pauseDurations.length)
+      : 0
+  );
+  const timedOut = Boolean(timedChallenge.timedOut);
+
+  let inference = timedChallenge.inference || "Pending";
+  if (inference === "Pending" && timedChallenge.completed) {
+    if (timedOut && completionRatio < 70) inference = "May need extended processing time";
+    else if (averagePause >= 2200 || charsPerMinute < 55) inference = "Slow and reflective processing pattern";
+    else if (timedChallenge.backspaceCount >= 6) inference = "Careful but correction-heavy typing";
+    else if (accuracy >= 80 && charsPerMinute >= 90) inference = "Comfortable timed typing";
+    else inference = "Balanced timed response";
+  }
+
+  let supportMessage = "This task suggests the student can work with a normal writing pace and standard classroom prompts.";
+  let diagnosticNote = "This is a functional classroom support signal, not a medical diagnosis.";
+
+  if (inference === "May need extended processing time" || inference === "Slow and reflective processing pattern") {
+    supportMessage = "The student may understand content better when given extra time, calmer pacing, and reduced writing pressure.";
+    diagnosticNote = "The pattern looks like slower processing under time pressure. It should be treated as a support need, not as a label.";
+  } else if (inference === "Careful but correction-heavy typing") {
+    supportMessage = "The student appears engaged but may self-correct often, so supportive prompts and short writing chunks may help.";
+  } else if (inference === "Comfortable timed typing") {
+    supportMessage = "The student handled the timed writing task comfortably with good pace and stable accuracy.";
+  }
+
+  return {
+    inference,
+    accuracy,
+    completionRatio: Math.min(completionRatio, 100),
+    charsPerMinute,
+    averagePause,
+    timedOut,
+    supportMessage,
+    diagnosticNote,
+    processingRisk: inference === "May need extended processing time" || inference === "Slow and reflective processing pattern",
+    accuracyRisk: accuracy < 65,
+  };
+}
+
+function buildSupportCheckInsights(timedChallengeInsights, orderingTask, memoryTask, audioTask, comprehensionTask) {
+  const averageScore = Math.round(
+    (
+      timedChallengeInsights.accuracy +
+      (orderingTask.score || 0) +
+      (memoryTask.score || 0) +
+      (audioTask.score || 0) +
+      (comprehensionTask.score || 0)
+    ) / 5
+  );
+
+  let inference = "Balanced classroom support profile";
+  if (timedChallengeInsights.processingRisk || averageScore < 55) {
+    inference = "May benefit from slower pacing and guided support";
+  } else if ((memoryTask.score || 0) < 50) {
+    inference = "Memory reinforcement may be helpful";
+  } else if ((audioTask.score || 0) < 50) {
+    inference = "Listening instructions may need reinforcement";
+  } else if (averageScore >= 80) {
+    inference = "Comfortable across mixed classroom tasks";
+  }
+
+  let supportMessage = "The student shows a fairly balanced response across the short support tasks.";
+  let diagnosticNote = "These task results indicate classroom support needs and learning comfort, not a medical diagnosis.";
+
+  if (inference === "May benefit from slower pacing and guided support") {
+    supportMessage = "The student may perform better when tasks are broken into smaller steps with extra time and calmer pacing.";
+    diagnosticNote = "The combined pattern suggests processing load under pressure. It should be used for support planning, not for diagnosis.";
+  } else if (inference === "Memory reinforcement may be helpful") {
+    supportMessage = "The student may benefit from repetition, review cues, and smaller recall chunks.";
+  } else if (inference === "Listening instructions may need reinforcement") {
+    supportMessage = "The student may understand spoken directions better when they are repeated slowly and paired with visuals or text.";
+  } else if (inference === "Comfortable across mixed classroom tasks") {
+    supportMessage = "The student handled the mixed tasks steadily and showed a healthy classroom support profile.";
+  }
+
+  return {
+    inference,
+    averageScore,
+    supportMessage,
+    diagnosticNote,
+    processingRisk: timedChallengeInsights.processingRisk || averageScore < 55,
+    accuracyRisk: timedChallengeInsights.accuracyRisk || (orderingTask.score || 0) < 50 || (comprehensionTask.score || 0) < 50,
+    memoryRisk: (memoryTask.score || 0) < 50,
+    audioRisk: (audioTask.score || 0) < 50,
   };
 }
 
