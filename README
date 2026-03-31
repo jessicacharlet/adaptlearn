@@ -1,0 +1,39 @@
+# ML-Based Adaptive Learning System for Neurodiverse Students
+
+## Overview
+
+This project predicts a student's preferred learning style and provides adaptive recommendations for visual, audio, and text-based learning support.
+
+## Project Structure
+
+```text
+project-folder/
+|-- frontend/   # React + Vite frontend
+|-- backend/    # Flask API
+|-- ml/         # Model training scripts and saved models
+|-- analysis/   # Analysis scripts and generated charts
+|-- dataset/    # CSV datasets
+|-- README
+```
+
+## Run The Project
+
+### Backend
+
+```powershell
+python backend/api.py
+```
+
+### Frontend
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+## API Endpoint
+
+```text
+POST http://127.0.0.1:5000/predict
+```
