@@ -10,6 +10,16 @@ import {
   Tooltip,
 } from "chart.js";
 import adaptLearnLogo from "./assets/adaptlearn-logo.svg";
+import cloudWallpaperOne from "./assets/wp10120890-cute-cloud-wallpapers.jpg";
+import { auth, db, firebaseReady } from "./firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 
 Chart.register(
   ArcElement,
@@ -24,6 +34,7 @@ Chart.register(
 const pageIntro = {
   home: "This is the home page. You can review the project and start the assessment.",
   login: "This is the login page. Enter your name and student ID, or use the microphone to fill them.",
+  "create-account": "This page lets a new student create an account and save their learning support profile.",
   behavioral: "This page checks learning interaction patterns using media and typed responses.",
   timed: "This page checks typing pace, ordering, memory, audio recall, and short comprehension using a multi-task support module.",
   assessment: "This page contains the learning habit questions. Use the slider or microphone to answer.",
@@ -37,6 +48,7 @@ const pageIntro = {
 const progressMap = {
   home: 0,
   login: 15,
+  "create-account": 12,
   behavioral: 30,
   timed: 42,
   assessment: 55,
@@ -173,11 +185,7 @@ const toolkitMap = {
   ],
 };
 
-const pageOrder = ["home", "login", "behavioral", "timed", "assessment", "subject", "dashboard", "recommendation", "analytics", "report"];
-const heroHighlights = [
-  { eyebrow: "Adaptive", title: "Context-aware flow", text: "The interface changes naturally from onboarding to prediction to analytics without feeling like separate pages." },
-  { eyebrow: "Accessible", title: "Voice-first support", text: "Microphone input and voice guidance are woven into the workflow instead of feeling like an afterthought." },
-];
+const pageOrder = ["home", "login", "create-account", "behavioral", "timed", "assessment", "subject", "dashboard", "recommendation", "analytics", "report"];
 const metricThemes = ["blue", "orange", "green", "pink", "violet", "gold"];
 const timedChallengePrompt = "Plants need sunlight, water, and air to grow strong every day. Their roots absorb water from the soil, while the leaves use sunlight to make food. If a plant does not get enough light or water, it may grow slowly or become weak.";
 const timedChallengeDuration = 45;
@@ -382,6 +390,16 @@ function buildFeatureRows(answers) {
 
 export default function App() {
   const [page, setPage] = useState("home");
+  const [user, setUser] = useState(null);
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [signupData, setSignupData] = useState({
+    name: "",
+    age: "",
+    specialization: "",
+    details: "",
+  });
   const [questionIndex, setQuestionIndex] = useState(0);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState("Microphone ready.");
@@ -433,6 +451,11 @@ export default function App() {
   });
 
   const recognitionRef = useRef(null);
+  const activeFieldRef = useRef(null);
+  const voiceContextRef = useRef(null);
+  const pageRef = useRef("home");
+  const questionRef = useRef(questions[0]);
+  const studentRef = useRef(initialStudent);
   const styleChartRef = useRef(null);
   const featureChartRef = useRef(null);
   const datasetStyleChartRef = useRef(null);
@@ -459,7 +482,68 @@ export default function App() {
     audioTask,
     comprehensionTask
   );
+  const adaptiveEngine = buildAdaptiveEngine({
+    behaviorInsights,
+    supportCheckInsights,
+    student,
+    page,
+    answers,
+  });
   const supportTasksCompleted = timedChallenge.completed && orderingTask.completed && memoryTask.completed && audioTask.completed && comprehensionTask.completed;
+
+  useEffect(() => {
+    activeFieldRef.current = activeField;
+    voiceContextRef.current = voiceContext;
+    pageRef.current = page;
+    questionRef.current = question;
+    studentRef.current = student;
+  }, [activeField, voiceContext, page, question, student]);
+
+  useEffect(() => {
+    if (!firebaseReady || !auth || !db) return undefined;
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) return;
+
+      try {
+        const userRef = doc(db, "users", currentUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const profile = userSnap.data();
+          const studentId = profile.studentId || `STU${String(Date.now()).slice(-6)}`;
+
+          if (!profile.studentId) {
+            await setDoc(userRef, { ...profile, studentId }, { merge: true });
+          }
+
+          setStudent((prev) => ({
+            ...prev,
+            name: profile.name || currentUser.displayName || prev.name,
+            id: studentId || prev.id,
+          }));
+        } else {
+          const generatedId = `STU${String(Date.now()).slice(-6)}`;
+          const fallbackProfile = {
+            name: currentUser.displayName || currentUser.email?.split("@")[0] || "Student",
+            studentId: generatedId,
+            email: currentUser.email || "",
+            createdAt: new Date().toISOString(),
+          };
+          await setDoc(userRef, fallbackProfile, { merge: true });
+          setStudent((prev) => ({
+            ...prev,
+            name: fallbackProfile.name,
+            id: generatedId,
+          }));
+        }
+      } catch {
+        // keep UI usable even if Firestore is unavailable
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const speakText = (text, force = false) => {
     if (!("speechSynthesis" in window)) return;
@@ -493,7 +577,7 @@ export default function App() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       setVoiceStatus("Voice input is not supported in this browser.");
-      return;
+      return undefined;
     }
     const recognition = new SpeechRecognition();
     recognition.lang = "en-US";
@@ -514,7 +598,13 @@ export default function App() {
     };
     recognition.onresult = (event) => handleVoiceTranscript(event.results[0][0].transcript.trim());
     recognitionRef.current = recognition;
-  }, [activeField, voiceContext, questionIndex, page, student]);
+    return () => {
+      recognition.abort();
+      if (recognitionRef.current === recognition) {
+        recognitionRef.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const now = Date.now();
@@ -746,20 +836,26 @@ export default function App() {
     return words[text.replace(/[\s-]+/g, "")] ?? null;
   };
 
-  const assessmentVoiceValue = (spokenText) => {
+  const assessmentVoiceValue = (spokenText, activeQuestion = questionRef.current) => {
     const lower = spokenText.toLowerCase();
-    if (lower.includes("never")) return question.min;
-    if (lower.includes("rarely")) return Math.round(question.min + (question.max - question.min) * 0.25);
-    if (lower.includes("sometimes")) return Math.round(question.min + (question.max - question.min) * 0.5);
-    if (lower.includes("often")) return Math.round(question.min + (question.max - question.min) * 0.75);
-    if (lower.includes("always") || lower.includes("very often")) return question.max;
+    if (lower.includes("never")) return activeQuestion.min;
+    if (lower.includes("rarely")) return Math.round(activeQuestion.min + (activeQuestion.max - activeQuestion.min) * 0.25);
+    if (lower.includes("sometimes")) return Math.round(activeQuestion.min + (activeQuestion.max - activeQuestion.min) * 0.5);
+    if (lower.includes("often")) return Math.round(activeQuestion.min + (activeQuestion.max - activeQuestion.min) * 0.75);
+    if (lower.includes("always") || lower.includes("very often")) return activeQuestion.max;
     const numeric = parseSpokenNumber(lower);
-    return numeric === null ? null : clamp(numeric, question.min, question.max);
+    return numeric === null ? null : clamp(numeric, activeQuestion.min, activeQuestion.max);
   };
 
   const handleVoiceTranscript = (transcript) => {
-    if (activeField) {
-      if (activeField === "id") {
+    const currentActiveField = activeFieldRef.current;
+    const currentVoiceContext = voiceContextRef.current;
+    const currentPage = pageRef.current;
+    const currentQuestion = questionRef.current;
+    const currentStudent = studentRef.current;
+
+    if (currentActiveField) {
+      if (currentActiveField === "id") {
         setStudent((prev) => ({ ...prev, id: transcript.replace(/\s+/g, "").toUpperCase() }));
         setVoiceStatus("Student ID captured.");
         speakText("Student ID added.", true);
@@ -771,26 +867,26 @@ export default function App() {
       return;
     }
 
-    if (voiceContext === "assessment") {
+    if (currentVoiceContext === "assessment") {
       const lower = transcript.toLowerCase();
       if (lower.includes("next")) return nextQuestion();
       if (lower.includes("back") || lower.includes("previous")) return previousQuestion();
-      const value = assessmentVoiceValue(transcript);
+      const value = assessmentVoiceValue(transcript, currentQuestion);
       if (value === null) return setVoiceStatus("Say a number or words like never, sometimes, often, or always.");
-      setAnswers((prev) => ({ ...prev, [question.id]: value }));
+      setAnswers((prev) => ({ ...prev, [currentQuestion.id]: value }));
       setVoiceStatus(`Answer saved as ${value}.`);
       speakText(`Answer saved as ${value}.`, true);
       return;
     }
 
-    if (voiceContext === "timed") {
+    if (currentVoiceContext === "timed") {
       setTimedChallenge((prev) => ({ ...prev, response: `${prev.response} ${transcript}`.trim() }));
       setVoiceStatus("Timed response updated.");
       return;
     }
 
-    if (voiceContext === "subject") {
-      const pending = subjectGroups.find((group) => !student[group.key]);
+    if (currentVoiceContext === "subject") {
+      const pending = subjectGroups.find((group) => !currentStudent[group.key]);
       if (!pending) return setVoiceStatus("All subject preferences are already selected.");
       const matched = pending.options.find((option) =>
         transcript.toLowerCase().includes(option.toLowerCase())
@@ -802,6 +898,10 @@ export default function App() {
     }
 
     const lower = transcript.toLowerCase();
+    if (currentPage === "assessment") {
+      setVoiceStatus("Use the assessment microphone to answer this question.");
+      return;
+    }
     if (lower.includes("home")) setPage("home");
     else if (lower.includes("login")) setPage("login");
     else if (lower.includes("timed")) setPage("timed");
@@ -827,6 +927,84 @@ export default function App() {
 
   const previousQuestion = () => {
     if (questionIndex > 0) setQuestionIndex((prev) => prev - 1);
+  };
+
+  const handleLogin = async () => {
+    setAuthError("");
+    if (!firebaseReady || !auth || !db) {
+      setAuthError("Firebase is not configured yet. Add your frontend/.env file and restart the frontend.");
+      return;
+    }
+    try {
+      const result = await signInWithEmailAndPassword(auth, authEmail, authPassword);
+      const userRef = doc(db, "users", result.user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const profile = userSnap.data();
+        const studentId = profile.studentId || `STU${String(Date.now()).slice(-6)}`;
+        if (!profile.studentId) {
+          await setDoc(userRef, { studentId }, { merge: true });
+        }
+        setStudent((prev) => ({
+          ...prev,
+          name: profile.name || result.user.displayName || prev.name,
+          id: studentId,
+        }));
+      }
+
+      setVoiceStatus("Account connected. You can continue with the assessment.");
+    } catch (error) {
+      setAuthError(error.message);
+    }
+  };
+
+  const handleSignup = async () => {
+    setAuthError("");
+    if (!firebaseReady || !auth || !db) {
+      setAuthError("Firebase is not configured yet. Add your frontend/.env file and restart the frontend.");
+      return;
+    }
+    try {
+      const generatedId = `STU${String(Date.now()).slice(-6)}`;
+      const { user: createdUser } = await createUserWithEmailAndPassword(auth, authEmail, authPassword);
+      await updateProfile(createdUser, { displayName: signupData.name });
+
+      await setDoc(doc(db, "users", createdUser.uid), {
+        name: signupData.name,
+        age: signupData.age,
+        specialization: signupData.specialization,
+        details: signupData.details,
+        email: authEmail,
+        studentId: generatedId,
+        createdAt: new Date().toISOString(),
+      });
+
+      setStudent((prev) => ({
+        ...prev,
+        name: signupData.name || "Student",
+        id: generatedId,
+      }));
+      setAuthPassword("");
+      setAuthError("Account created successfully. Please log in.");
+      await signOut(auth);
+      setPage("login");
+    } catch (error) {
+      setAuthError(error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (!firebaseReady || !auth) {
+      setUser(null);
+      setPage("home");
+      return;
+    }
+    await signOut(auth);
+    setUser(null);
+    setAuthPassword("");
+    setAuthError("");
+    setPage("home");
   };
 
   const startAssessment = () => {
@@ -1189,6 +1367,7 @@ export default function App() {
         report_summary: reportSummary,
         behavior_insights: behaviorInsights,
         support_check: supportCheckInsights,
+        adaptive_engine: adaptiveEngine,
         student_snapshot: {
           favoriteSubject: student.favoriteSubject,
           difficultSubject: student.difficultSubject,
@@ -1215,21 +1394,26 @@ export default function App() {
         behavior_data: behaviorData,
         verification_data: behaviorVerification,
         support_check: supportCheckInsights,
+        adaptive_engine: adaptiveEngine,
       }),
     }).catch(() => null);
   }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const featureRows = buildFeatureRows(answers);
 
-  const reportSummary = buildReportSummary(student, answers, behaviorInsights, supportCheckInsights);
+  const reportSummary = buildReportSummary(student, answers, behaviorInsights, supportCheckInsights, adaptiveEngine);
 
   return (
     <div className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <img className="brand-logo" src={adaptLearnLogo} alt="AdaptLearn logo" />
-          <div>
+          <div className="brand-mark">
+            <img className="brand-logo" src={adaptLearnLogo} alt="AdaptLearn logo" />
+          </div>
+          <div className="brand-copy">
+            <span className="brand-kicker">Adaptive Learning Project</span>
             <h1>AdaptLearn</h1>
+            <p>Simple learning support</p>
           </div>
         </div>
         <div className="progress-wrapper">
@@ -1240,70 +1424,64 @@ export default function App() {
           <span className="profile-label">Student</span>
           <strong>{student.name || "Guest"}</strong>
         </div>
+        {user && (
+          <button className="secondary-btn topbar-logout" onClick={handleLogout}>Logout</button>
+        )}
       </header>
 
       <main className="page">
         {page === "home" && (
           <section className="page-section">
             <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro.home, true)}>Listen</button></div>
-            <div className="hero-layout">
-              <div className="hero-panel">
-                <span className="eyebrow">Machine Learning + Accessibility</span>
-                <h2>ML-Based Adaptive Learning System for Neurodiverse Students</h2>
+            <div className="hero-layout simple-home">
+              <div
+                className="hero-panel hero-wallpaper"
+                style={{
+                  backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.72)), url(${cloudWallpaperOne})`,
+                }}
+              >
+                <span className="eyebrow">Welcome</span>
+                <h2>Find the best way to learn</h2>
                 <p className="hero-copy">
-                  This React version makes the project feel more product-ready, modular, and suitable for demos,
-                  viva explanations, and future extension.
+                  Answer a few simple questions and the app will suggest a learning style that fits you.
                 </p>
-                <div className="hero-ribbon-row">
-                  <span className="hero-ribbon">Predict</span>
-                  <span className="hero-ribbon alt">Personalize</span>
-                  <span className="hero-ribbon warm">Visualize</span>
-                </div>
-                <div className="hero-stats">
-                  <div><strong>3</strong><span>Learning styles</span></div>
-                  <div><strong>10</strong><span>Assessment signals</span></div>
-                  <div><strong>1</strong><span>Personal dashboard</span></div>
+                <p className="hero-copy" style={{ marginTop: "12px" }}>
+                  This project is an ML-based adaptive learning system designed to support students by studying their
+                  learning habits, interaction patterns, and subject preferences. It helps identify whether a student
+                  learns best through visual, audio, or text-based methods and then shows simple recommendations,
+                  analytics, and a final support report.
+                </p>
+                <div className="helper-grid home-helper-grid">
+                  <div className="helper-card">
+                    <strong>Step 1</strong>
+                    <span>Enter your name and student ID.</span>
+                  </div>
+                  <div className="helper-card">
+                    <strong>Step 2</strong>
+                    <span>Answer the questions by slider or voice.</span>
+                  </div>
+                  <div className="helper-card">
+                    <strong>Step 3</strong>
+                    <span>See your result and study tips.</span>
+                  </div>
                 </div>
                 <div className="cta-row">
-                  <button className="primary-btn" onClick={() => setPage("login")}>Start Assessment</button>
+                  <button className="primary-btn" onClick={() => setPage("login")}>Start</button>
                   <button className="secondary-btn" onClick={startContextMic}>Use Microphone</button>
                 </div>
               </div>
-              <div className="hero-side-stack">
-                <div className="hero-side-card hero-side-card-main">
-                  <p className="hero-side-kicker">Live system snapshot</p>
-                  <div className="hero-side-grid">
-                    <div>
-                      <span className="hero-side-label">Frontend</span>
-                      <strong>React + Vite</strong>
-                    </div>
-                    <div>
-                      <span className="hero-side-label">Backend</span>
-                      <strong>Flask API</strong>
-                    </div>
-                    <div>
-                      <span className="hero-side-label">ML Core</span>
-                      <strong>Random Forest</strong>
-                    </div>
-                    <div>
-                      <span className="hero-side-label">Focus</span>
-                      <strong>Accessibility</strong>
-                    </div>
-                  </div>
+              <div className="hero-side-stack compact">
+                <div className="hero-side-card">
+                  <span className="mini-eyebrow">Easy to use</span>
+                  <h3>Simple steps</h3>
+                  <p>Move from login to assessment, result, and report without getting lost.</p>
                 </div>
-                {heroHighlights.map((item) => (
-                  <div className="hero-side-card" key={item.title}>
-                    <span className="mini-eyebrow">{item.eyebrow}</span>
-                    <h3>{item.title}</h3>
-                    <p>{item.text}</p>
-                  </div>
-                ))}
+                <div className="hero-side-card">
+                  <span className="mini-eyebrow">Helpful support</span>
+                  <h3>Voice friendly</h3>
+                  <p>You can use the microphone on important pages if typing feels harder.</p>
+                </div>
               </div>
-            </div>
-            <div className="feature-grid">
-              <FeatureCard title="Smart ML Detection" tone="blue" text="The system predicts whether visual, audio, or text-based support fits the learner best." />
-              <FeatureCard title="Voice-Enabled UX" tone="orange" text="Microphone support works across login, assessment, subject selection, and page navigation." />
-              <FeatureCard title="Presentation-Ready Dashboard" tone="green" text="The final dashboard and analytics view makes the project feel polished, intentional, and ready to present." />
             </div>
           </section>
         )}
@@ -1318,9 +1496,58 @@ export default function App() {
               </div>
               <h2>Student Login</h2>
               <p>Enter your details to begin the adaptive learning assessment.</p>
+              <div className="helper-grid">
+                <div className="helper-card">
+                  <strong>1. Enter details</strong>
+                  <span>Add your name and student ID so the report is linked correctly.</span>
+                </div>
+                <div className="helper-card">
+                  <strong>2. Use voice if easier</strong>
+                  <span>The microphone beside each field can fill the form for you.</span>
+                </div>
+                <div className="helper-card">
+                  <strong>3. Start assessment</strong>
+                  <span>Once both fields are filled, tap the main button to continue.</span>
+                </div>
+              </div>
+              {!firebaseReady && (
+                <div className="support-banner">
+                  <strong>Firebase setup needed:</strong> Create `frontend/.env` from `.env.example`, add your Firebase values, and restart `npm run dev`.
+                </div>
+              )}
+              {authError && (
+                <div className="support-banner">
+                  <strong>Notice:</strong> {authError}
+                </div>
+              )}
               {behaviorInsights.supportHint && (
                 <div className="support-banner">
                   <strong>Support tip:</strong> {behaviorInsights.supportHint}
+                </div>
+              )}
+              {adaptiveEngine.interventions.length > 0 && (
+                <div className="adaptive-banner">
+                  <strong>Adaptive mode:</strong> {adaptiveEngine.studentMessage}
+                </div>
+              )}
+              {!user ? (
+                <>
+                  <label className="field-label">Email</label>
+                  <div className="field-row">
+                    <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Enter your email" />
+                  </div>
+                  <label className="field-label">Password</label>
+                  <div className="field-row">
+                    <input type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Enter your password" />
+                  </div>
+                  <div className="inline-actions auth-actions">
+                    <button className="secondary-btn" onClick={handleLogin}>Log In With Firebase</button>
+                    <button className="secondary-btn" onClick={() => setPage("create-account")}>Create Account</button>
+                  </div>
+                </>
+              ) : (
+                <div className="adaptive-banner">
+                  <strong>Connected account:</strong> {user.email}
                 </div>
               )}
               <label className="field-label">Your Name</label>
@@ -1338,6 +1565,64 @@ export default function App() {
           </section>
         )}
 
+        {page === "create-account" && (
+          <section className="page-section">
+            <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro["create-account"], true)}>Listen</button></div>
+            <div className="form-card">
+              <div className="section-chip-row">
+                <span className="section-chip">Step 1</span>
+                <span className="section-chip ghost">Create student account</span>
+              </div>
+              <h2>Create Account</h2>
+              <p>Create a Firebase account and save a basic support profile. A student ID will be generated automatically if one does not exist.</p>
+              {!firebaseReady && (
+                <div className="support-banner">
+                  <strong>Firebase setup needed:</strong> Create `frontend/.env` from `.env.example`, add your Firebase values, and restart `npm run dev`.
+                </div>
+              )}
+              {authError && (
+                <div className="support-banner">
+                  <strong>Notice:</strong> {authError}
+                </div>
+              )}
+              <label className="field-label">Email</label>
+              <div className="field-row">
+                <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Email address" />
+              </div>
+              <label className="field-label">Password</label>
+              <div className="field-row">
+                <input type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Password" />
+              </div>
+              <label className="field-label">Full Name</label>
+              <div className="field-row">
+                <input value={signupData.name} onChange={(e) => setSignupData((prev) => ({ ...prev, name: e.target.value }))} placeholder="Student full name" />
+              </div>
+              <label className="field-label">Age</label>
+              <div className="field-row">
+                <input type="number" value={signupData.age} onChange={(e) => setSignupData((prev) => ({ ...prev, age: e.target.value }))} placeholder="Age" />
+              </div>
+              <label className="field-label">Support Category</label>
+              <div className="field-row">
+                <input value={signupData.specialization} onChange={(e) => setSignupData((prev) => ({ ...prev, specialization: e.target.value }))} placeholder="e.g. ADHD, Dyslexia, ASD" />
+              </div>
+              <label className="field-label">Additional Notes</label>
+              <div className="field-row">
+                <textarea
+                  className="behavior-textarea"
+                  rows={3}
+                  value={signupData.details}
+                  onChange={(e) => setSignupData((prev) => ({ ...prev, details: e.target.value }))}
+                  placeholder="Anything helpful for learning support or classroom needs..."
+                />
+              </div>
+              <div className="inline-actions">
+                <button className="primary-btn" onClick={handleSignup}>Create Account</button>
+                <button className="secondary-btn" onClick={() => setPage("login")}>Back to Login</button>
+              </div>
+            </div>
+          </section>
+        )}
+
         {page === "behavioral" && (
           <section className="page-section">
             <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro.behavioral, true)}>Listen</button></div>
@@ -1348,6 +1633,9 @@ export default function App() {
               </div>
               <h2>{currentInteractionLesson.topic}</h2>
               <p>{currentInteractionLesson.summary}</p>
+              <div className="support-banner subtle">
+                <strong>What to do here:</strong> watch the content, type a short answer, then continue to the next task.
+              </div>
 
               <div className="behavior-layout">
                 <div className="behavior-media-card">
@@ -1414,6 +1702,11 @@ export default function App() {
         {page === "timed" && (
           <section className="page-section">
             <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro.timed, true)}>Listen</button></div>
+            {adaptiveEngine.interventions.length > 0 && (
+              <div className="adaptive-banner">
+                <strong>Live support active:</strong> {adaptiveEngine.studentMessage}
+              </div>
+            )}
             <div className="timed-header-card">
               <div>
                 <div className="section-chip-row">
@@ -1425,6 +1718,11 @@ export default function App() {
                   These short tasks are not mark-based tests. They help the system observe processing pace,
                   ordering comfort, memory recall, listening recall, and short comprehension support needs.
                 </p>
+                <div className="helper-inline-list">
+                  <span>Complete all 5 tasks</span>
+                  <span>Work at your own pace</span>
+                  <span>Accuracy matters more than speed</span>
+                </div>
               </div>
               <div className={`timer-badge ${timedChallenge.running ? "running" : ""}`}>
                 <span>Tasks Complete</span>
@@ -1595,6 +1893,13 @@ export default function App() {
               <div className="support-banner subtle">
                 <strong>Interpretation:</strong> {supportCheckInsights.diagnosticNote}
               </div>
+              {adaptiveEngine.interventions.length > 0 && (
+                <div className="adaptive-chip-row">
+                  {adaptiveEngine.interventions.map((item) => (
+                    <span className="adaptive-chip" key={item.label}>{item.label}</span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="inline-actions center">
@@ -1617,9 +1922,24 @@ export default function App() {
               <span className="question-tag">Question {questionIndex + 1} of {questions.length}</span>
               <h2>{question.text}</h2>
               <p>Use the slider or microphone to choose the value that matches your experience.</p>
+              <div className="helper-grid compact">
+                <div className="helper-card">
+                  <strong>Voice answers</strong>
+                  <span>Say a number or say never, sometimes, often, or always.</span>
+                </div>
+                <div className="helper-card">
+                  <strong>Current answer</strong>
+                  <span>{answers[question.id]} selected for this question.</span>
+                </div>
+              </div>
               {behaviorInsights.adaptivePrompt && (
                 <div className="support-banner subtle">
                   <strong>Adaptive prompt:</strong> {behaviorInsights.adaptivePrompt}
+                </div>
+              )}
+              {adaptiveEngine.interventions.length > 0 && (
+                <div className="adaptive-banner">
+                  <strong>Adaptive support engine:</strong> {adaptiveEngine.studentMessage}
                 </div>
               )}
               <div className="range-value">{answers[question.id]}</div>
@@ -1653,6 +1973,9 @@ export default function App() {
               </div>
               <h2>Subject Preferences</h2>
               <p>These preferences personalize the experience and help your project feel more student-centered.</p>
+              <div className="support-banner subtle">
+                <strong>Friendly reminder:</strong> choose the study options that feel easiest and most natural for you. There are no wrong answers here.
+              </div>
               {subjectGroups.map((group) => (
                 <div className="subject-block" key={group.key}>
                   <label className="field-label">{group.label}</label>
@@ -1692,6 +2015,10 @@ export default function App() {
                 <div className="dashboard-badge">
                   <span>Predicted focus</span>
                   <strong>{student.learningStyle || "Pending"}</strong>
+                </div>
+                <div className="dashboard-badge">
+                  <span>Adaptive mode</span>
+                  <strong>{adaptiveEngine.modeLabel}</strong>
                 </div>
                 <button className="secondary-btn" onClick={() => setPage("recommendation")}>View Recommendations</button>
               </div>
@@ -1923,6 +2250,20 @@ export default function App() {
               <p>{supportCheckInsights.supportMessage}</p>
             </div>
 
+            <div className="report-panel report-wide">
+              <h3>Real-Time Adaptive Interventions Applied</h3>
+              <div className="report-list">
+                <div><span>Adaptive mode</span><strong>{adaptiveEngine.modeLabel}</strong></div>
+                <div><span>Triggered interventions</span><strong>{adaptiveEngine.interventions.length}</strong></div>
+                <div><span>Support summary</span><strong>{adaptiveEngine.teacherSummary}</strong></div>
+              </div>
+              <ul className="report-points">
+                {adaptiveEngine.interventions.map((item) => (
+                  <li key={item.label}>{item.label}: {item.detail}</li>
+                ))}
+              </ul>
+            </div>
+
             <div className="report-grid three">
               <div className="report-panel">
                 <h3>Strengths</h3>
@@ -1964,7 +2305,7 @@ export default function App() {
       <nav className="bottom-nav">
         {pageOrder.map((item) => (
           <button key={item} className={page === item ? "active" : ""} onClick={() => setPage(item)}>
-            {item}
+            {item === "create-account" ? "create account" : item.replace("-", " ")}
           </button>
         ))}
       </nav>
@@ -2020,7 +2361,7 @@ function MetricTile({ label, value, tone = "blue" }) {
   );
 }
 
-function buildReportSummary(student, answers, behaviorInsights, supportCheckInsights) {
+function buildReportSummary(student, answers, behaviorInsights, supportCheckInsights, adaptiveEngine) {
   const engagementScore = Math.round(((answers.video_actions || 0) + (answers.audio_actions || 0) + (answers.text_actions || 0) + (answers.resource_visits || 0) + (answers.hand_raise || 0)) / 5);
   const studyRoutine = Math.round(((answers.study_time || 0) * 8) + ((answers.announcement_views || 0) * 0.35));
   const absenceRisk = answers.absences || 0;
@@ -2057,6 +2398,7 @@ function buildReportSummary(student, answers, behaviorInsights, supportCheckInsi
   if (supportCheckInsights.accuracyRisk) concerns.push("Performance dropped under pressure across one or more short tasks, so calmer pacing may help.");
   if (supportCheckInsights.memoryRisk) concerns.push("Memory recall under short exposure may need reinforcement through repetition and chunking.");
   if (supportCheckInsights.audioRisk) concerns.push("Listening recall may need spoken repetition and slower verbal instruction.");
+  if (adaptiveEngine.interventions.length >= 3) concerns.push("Multiple live support adjustments were triggered, suggesting the student benefits from dynamic classroom adaptation.");
 
   actions.push(`Provide more ${student.learningStyle ? student.learningStyle.toLowerCase() : "personalized"} learning resources during revision.`);
   actions.push("Set short weekly goals and review progress consistently with the student.");
@@ -2069,6 +2411,7 @@ function buildReportSummary(student, answers, behaviorInsights, supportCheckInsi
   if (supportCheckInsights.accuracyRisk) actions.push("Use shorter copy tasks, chunked instructions, and low-pressure text verification activities.");
   if (supportCheckInsights.memoryRisk) actions.push("Use visual reminders, spaced repetition, and fewer items per step during recall-heavy tasks.");
   if (supportCheckInsights.audioRisk) actions.push("Repeat verbal instructions slowly and pair them with visual cues or short written supports.");
+  if (adaptiveEngine.interventions.length >= 3) actions.push("Continue using real-time adaptive supports such as reduced text load, memory scaffolds, and slower pacing during tasks.");
 
   if (!strengths.length) strengths.push("The student is still building consistent learning habits, and strengths may become clearer with repeated monitoring.");
   if (!concerns.length) concerns.push("No immediate major concern is visible from the current assessment, but periodic review is still advised.");
@@ -2183,6 +2526,69 @@ function buildSupportCheckInsights(timedChallengeInsights, orderingTask, memoryT
     accuracyRisk: timedChallengeInsights.accuracyRisk || (orderingTask.score || 0) < 50 || (comprehensionTask.score || 0) < 50,
     memoryRisk: (memoryTask.score || 0) < 50,
     audioRisk: (audioTask.score || 0) < 50,
+  };
+}
+
+function buildAdaptiveEngine({ behaviorInsights, supportCheckInsights, student, page, answers }) {
+  const interventions = [];
+
+  if (behaviorInsights.pauseRisk || supportCheckInsights.processingRisk) {
+    interventions.push({
+      label: "Extended Processing Mode",
+      detail: "Shorter instructions and calmer pacing are recommended because pauses and timed-task signals suggest slower processing under pressure.",
+    });
+  }
+
+  if (behaviorInsights.backspaceRisk || supportCheckInsights.accuracyRisk) {
+    interventions.push({
+      label: "Reduced Text Load",
+      detail: "The interface should prefer short prompts, sentence starters, and voice-friendly input because correction load is high.",
+    });
+  }
+
+  if (supportCheckInsights.memoryRisk) {
+    interventions.push({
+      label: "Memory Scaffold",
+      detail: "Chunking, reminders, and repetition are recommended because short-term recall performance was weaker.",
+    });
+  }
+
+  if (supportCheckInsights.audioRisk) {
+    interventions.push({
+      label: "Audio Reinforcement",
+      detail: "Verbal instructions should be repeated more slowly and paired with text or visuals.",
+    });
+  }
+
+  if ((student.learningStyle || "").toLowerCase() === "visual" || (answers.video_actions || 0) >= Math.max(answers.audio_actions || 0, answers.text_actions || 0)) {
+    interventions.push({
+      label: "Visual Support Path",
+      detail: "The student appears to respond well to visual learning, so diagrams, flowcharts, and concept visuals should be emphasized.",
+    });
+  }
+
+  const uniqueInterventions = interventions.filter((item, index, list) => list.findIndex((entry) => entry.label === item.label) === index);
+  const modeLabel = uniqueInterventions.length >= 4
+    ? "High Adaptation"
+    : uniqueInterventions.length >= 2
+      ? "Adaptive Support Active"
+      : uniqueInterventions.length === 1
+        ? "Light Support Active"
+        : "Standard Mode";
+
+  const studentMessage = uniqueInterventions.length
+    ? "The system is adjusting task pressure and support style to make learning feel clearer and calmer."
+    : "No extra adaptation is needed right now. Standard support remains active.";
+
+  const teacherSummary = uniqueInterventions.length
+    ? `During the ${page} stage, the adaptive engine activated ${uniqueInterventions.length} live support change${uniqueInterventions.length > 1 ? "s" : ""} to better match the student's interaction pattern.`
+    : "The student completed the current stage without triggering additional live support adjustments.";
+
+  return {
+    modeLabel,
+    interventions: uniqueInterventions,
+    studentMessage,
+    teacherSummary,
   };
 }
 

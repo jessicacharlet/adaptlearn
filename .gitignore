@@ -1,0 +1,17 @@
+# Firebase local/project config
+.firebase/
+.firebaserc
+firebase.json
+firestore.indexes.json
+firestore.rules
+storage.rules
+
+# Firebase credentials and local emulator data
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+service-account*.json
+firebase-service-account*.json
+*.serviceAccountKey.json

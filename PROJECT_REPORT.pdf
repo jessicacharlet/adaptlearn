@@ -1,0 +1,779 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R 21 0 R 23 0 R 25 0 R 27 0 R 29 0 R 31 0 R 33 0 R] /Count 14 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Length 3433 >>
+stream
+BT /F2 18 Tf 1 0 0 1 54.00 776.00 Tm (ML-Based Adaptive Learning System for Neurodiverse) Tj ET
+BT /F2 18 Tf 1 0 0 1 54.00 753.00 Tm (Students - Project Report) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 706.00 Tm (1. Project Overview) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 669.00 Tm (Project Title) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 653.00 Tm (ML-Based Adaptive Learning System for Neurodiverse Students) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 626.00 Tm (One-Line Description) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 610.00 Tm (A full-stack adaptive learning web application that predicts a student's learning style and) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 596.00 Tm (provides personalized study recommendations, behavioral insights, analytics, and) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 582.00 Tm (parent/teacher reports.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 555.00 Tm (Purpose / Problem It Solves) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 539.00 Tm (The project helps students, parents, and teachers understand how a learner engages with) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 525.00 Tm (educational content. It collects learning behavior, questionnaire answers, subject) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 511.00 Tm (preferences, and short support-check task results, then predicts whether the student is best) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 497.00 Tm (supported through Visual, Audio, or Text-based learning resources.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 476.00 Tm (For neurodiverse students, a single teaching format may not work well for everyone. This) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 462.00 Tm (system aims to make learning more personalized by identifying preferred learning patterns and) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 448.00 Tm (suggesting practical support strategies.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 421.00 Tm (Target Users / Audience) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 405.00 Tm (- Neurodiverse students who need personalized learning support.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 391.00 Tm (- Teachers who want insight into student learning preferences and engagement.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 377.00 Tm (- Parents who need understandable reports about strengths, risks, and recommended support.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 363.00 Tm (- Schools or learning centers exploring adaptive learning tools.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 336.00 Tm (Project Type) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 320.00 Tm (Full-stack web application with a machine learning backend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 299.00 Tm (The project includes:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 285.00 Tm (- React frontend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 271.00 Tm (- Flask API backend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 257.00 Tm (- Scikit-learn machine learning models.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 243.00 Tm (- CSV-based dataset storage.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 229.00 Tm (- Analysis scripts for model evaluation and visualization.) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 198.00 Tm (2. Tech Stack & Tools) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 161.00 Tm (Languages Used) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 145.00 Tm (- JavaScript / JSX for the frontend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 131.00 Tm (- Python for backend, machine learning, preprocessing, and analysis.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 117.00 Tm (- CSS for styling.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 103.00 Tm (- CSV for dataset storage.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 76.00 Tm (Frameworks and Libraries) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 3438 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 788.00 Tm (Frontend:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- React ^19.1.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 760.00 Tm (- React DOM ^19.1.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 746.00 Tm (- Vite ^7.0.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 732.00 Tm (- @vitejs/plugin-react ^5.0.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 718.00 Tm (- Chart.js ^4.5.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 704.00 Tm (- Firebase ^12.11.0) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 683.00 Tm (Backend:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 669.00 Tm (- Flask) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 655.00 Tm (- Flask-CORS) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 641.00 Tm (- NumPy) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 627.00 Tm (- Pandas) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 613.00 Tm (- Scikit-learn) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 599.00 Tm (- Joblib) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 578.00 Tm (Machine Learning:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 564.00 Tm (- RandomForestClassifier) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 550.00 Tm (- LogisticRegression) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 536.00 Tm (- SVC) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 522.00 Tm (- KNeighborsClassifier) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 508.00 Tm (- LabelEncoder) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 494.00 Tm (- StandardScaler) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 480.00 Tm (- SimpleImputer) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 466.00 Tm (- train_test_split) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 452.00 Tm (- cross_val_score) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 438.00 Tm (- accuracy_score) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 424.00 Tm (- classification_report) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 410.00 Tm (- confusion_matrix) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 389.00 Tm (Analysis / Visualization:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 375.00 Tm (- Matplotlib) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 361.00 Tm (- Seaborn) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 347.00 Tm (- Power BI dataset preparation script) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 320.00 Tm (Databases / Storage) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 304.00 Tm (- CSV datasets in the dataset/ folder.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 290.00 Tm (- Trained ML model files stored as .pkl files using Joblib.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 276.00 Tm (- Firebase Authentication and Firestore are configured on the frontend, if the required) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 262.00 Tm (Vite environment variables are provided.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 248.00 Tm (- The Flask endpoints for behavior tracking and report saving currently acknowledge) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 234.00 Tm (received data but do not persist it to a database.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 207.00 Tm (External APIs or Services) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 191.00 Tm (- Firebase Authentication.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 177.00 Tm (- Firebase Firestore.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 163.00 Tm (- Browser Web Speech APIs for speech recognition and speech synthesis.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 149.00 Tm (- External educational/tool links in the recommendation toolkit, such as YouTube, Google) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 135.00 Tm (Docs, Quizlet, Notion, Excalidraw, and text-to-speech tools.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 121.00 Tm (- NASA-hosted educational videos used in behavioral verification lessons.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 94.00 Tm (Dev Tools) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 78.00 Tm (- npm as the frontend package manager.) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 4209 >>
+stream
+BT /F1 10 Tf 1 0 0 1 66.00 788.00 Tm (- Vite as the frontend development/build tool.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- pip for Python dependency installation.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 760.00 Tm (- Joblib for model serialization.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 746.00 Tm (- Flask development server for local API execution.) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 715.00 Tm (3. Project Architecture) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 678.00 Tm (High-Level Architecture) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 662.00 Tm (The system follows a client-server architecture with an ML pipeline:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 641.00 Tm (1. The React frontend collects student profile details, questionnaire responses, behavioral) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 627.00 Tm (signals, timed-task results, and subject preferences.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 613.00 Tm (2. The frontend sends prediction input to the Flask backend through the /predict endpoint.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 599.00 Tm (3. The Flask backend loads a trained machine learning model from) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 585.00 Tm (ml/learning_style_model.pkl.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 571.00 Tm (4. The model predicts the student's learning style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 557.00 Tm (5. The frontend displays the result, charts, recommendations, adaptive support messages,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 543.00 Tm (analytics, and a parent/teacher report.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 529.00 Tm (6. Separate Python scripts handle preprocessing, training, model comparison, and analysis) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 515.00 Tm (visualizations.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 488.00 Tm (Folder / Module Structure) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 460.00 Tm (project-folder/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 449.00 Tm (|-- README) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 438.00 Tm (|-- PROJECT_REPORT.md) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 427.00 Tm (|-- vite.config.js) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 416.00 Tm (|-- frontend/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 405.00 Tm (|   |-- package.json) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 394.00 Tm (|   |-- package-lock.json) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 383.00 Tm (|   |-- vite.config.js) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 372.00 Tm (|   |-- src/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 361.00 Tm (|       |-- App.jsx) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 350.00 Tm (|       |-- main.jsx) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 339.00 Tm (|       |-- styles.css) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 328.00 Tm (|       |-- firebase.js) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 317.00 Tm (|       |-- useAdaptiveEngine.js) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 306.00 Tm (|       |-- assets/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 295.00 Tm (|           |-- adaptlearn-logo.svg) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 284.00 Tm (|           |-- cloud wallpaper images) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 273.00 Tm (|-- backend/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 262.00 Tm (|   |-- api.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 251.00 Tm (|   |-- requirements.txt) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 240.00 Tm (|   |-- test_api.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 229.00 Tm (|-- ml/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 218.00 Tm (|   |-- preprocess.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 207.00 Tm (|   |-- train_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 196.00 Tm (|   |-- random_forest_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 185.00 Tm (|   |-- logistic_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 174.00 Tm (|   |-- svm_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 163.00 Tm (|   |-- knn_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 152.00 Tm (|   |-- predict.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 141.00 Tm (|   |-- test_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 130.00 Tm (|   |-- check_features.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 119.00 Tm (|   |-- add_synthetic_features.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 108.00 Tm (|   |-- learning_style_model.pkl) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 97.00 Tm (|   |-- logistic_model.pkl) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 86.00 Tm (|   |-- svm_model.pkl) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 75.00 Tm (|   |-- knn_model.pkl) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 4301 >>
+stream
+BT /F3 8.5 Tf 1 0 0 1 68.00 788.00 Tm (|   |-- feature_names.pkl) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 777.00 Tm (|-- analysis/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 766.00 Tm (|   |-- feature_importance.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 755.00 Tm (|   |-- cross_validation.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 744.00 Tm (|   |-- confusion_matrix.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 733.00 Tm (|   |-- confidence_analysis.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 722.00 Tm (|   |-- plot_graph.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 711.00 Tm (|   |-- log_analysis.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 700.00 Tm (|   |-- powerbi_dataset_dashboard.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 689.00 Tm (|   |-- analysis graph/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 678.00 Tm (|-- dataset/) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 667.00 Tm (|   |-- combined_final_dataset.csv) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 656.00 Tm (|   |-- dataset_with_synthetic_features.csv) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 645.00 Tm (|   |-- train_data.csv) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 634.00 Tm (|   |-- test_data.csv) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 605.00 Tm (How Components Interact) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 589.00 Tm (- frontend/src/main.jsx mounts the React application.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 575.00 Tm (- frontend/src/App.jsx contains the main UI, state management, assessment flow, behavior) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 561.00 Tm (tracking, prediction call, charts, recommendations, and report display.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 547.00 Tm (- frontend/src/firebase.js initializes Firebase only when the required VITE_FIREBASE_*) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 533.00 Tm (environment variables are available.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 519.00 Tm (- backend/api.py exposes REST endpoints and loads the trained model.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 505.00 Tm (- ml/train_model.py trains the main Random Forest model and saves it as) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 491.00 Tm (learning_style_model.pkl.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 477.00 Tm (- dataset/combined_final_dataset.csv provides the main training and analytics data.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 463.00 Tm (- analysis/*.py scripts generate model evaluation charts and summary visuals.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 436.00 Tm (Design Patterns Used) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 420.00 Tm (- Client-server architecture.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 406.00 Tm (- Single Page Application pattern on the frontend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 392.00 Tm (- REST API pattern for backend communication.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 378.00 Tm (- Machine learning pipeline pattern: preprocessing -> training -> evaluation -> serialized) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 364.00 Tm (model -> inference API.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 350.00 Tm (- Component-based UI design in React.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 336.00 Tm (- Rule-based adaptive support logic inside the frontend, combined with ML-based learning-) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 322.00 Tm (style prediction.) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 291.00 Tm (4. Features & Functionality) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 254.00 Tm (Complete Feature List) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 238.00 Tm (- Home/introduction screen.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 224.00 Tm (- Student login form using student name and ID.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 210.00 Tm (- Optional Firebase account creation and login.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 196.00 Tm (- Voice-assisted input using browser speech recognition.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 182.00 Tm (- Text-to-speech page guidance.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 168.00 Tm (- Behavioral verification tasks using learning media and typed responses.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 154.00 Tm (- Multi-task support check with:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 140.00 Tm (- timed typing task,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 126.00 Tm (- drag-and-drop ordering task,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 112.00 Tm (- memory recall task,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 98.00 Tm (- audio recall task,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 84.00 Tm (- short comprehension task.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 70.00 Tm (- Learning habit questionnaire with sliders.) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 4237 >>
+stream
+BT /F1 10 Tf 1 0 0 1 66.00 788.00 Tm (- Subject preference collection.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- ML-based prediction of learning style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 760.00 Tm (- Fallback client-side prediction if backend prediction fails.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 746.00 Tm (- Dashboard showing predicted learning style and confidence.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 732.00 Tm (- Chart.js visualizations.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 718.00 Tm (- Dataset summary analytics from the backend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 704.00 Tm (- Personalized recommendations for Visual, Audio, and Text learners.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 690.00 Tm (- Direct learning toolkit links based on predicted style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 676.00 Tm (- Parent/teacher report with strengths, risks, and support suggestions.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 662.00 Tm (- Adaptive support engine that reacts to behavior indicators such as long pauses, repeated) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 648.00 Tm (corrections, and task difficulty.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 634.00 Tm (- Backend endpoints for login, prediction, behavior tracking, report submission, and) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 620.00 Tm (dataset summary.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 606.00 Tm (- ML training scripts for Random Forest, Logistic Regression, SVM, and KNN.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 592.00 Tm (- Analysis scripts for feature importance, cross-validation, confidence analysis, and) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 578.00 Tm (confusion matrix.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 551.00 Tm (Core Workflow) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 535.00 Tm (1. The student opens the React app.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 521.00 Tm (2. The student enters name and student ID.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 507.00 Tm (3. The app optionally supports authentication through Firebase.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 493.00 Tm (4. The student completes behavior verification tasks.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 479.00 Tm (5. The student completes the timed multi-task support check.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 465.00 Tm (6. The student answers learning habit questions using sliders or voice input.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 451.00 Tm (7. The student selects subject preferences.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 437.00 Tm (8. The frontend builds a feature payload from the answers.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 423.00 Tm (9. The frontend sends the payload to POST /predict.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 409.00 Tm (10. Flask loads the trained model and predicts a learning style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 395.00 Tm (11. The frontend displays the predicted style, confidence value, charts, recommendations,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 381.00 Tm (toolkit links, analytics, and report.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 367.00 Tm (12. Behavior and report data are sent to backend acknowledgement endpoints.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 340.00 Tm (User Flows) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 317.00 Tm (Student flow:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 303.00 Tm (1. Home -> Login -> Create Account or continue.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 289.00 Tm (2. Behavioral Check -> Timed Support Check.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 275.00 Tm (3. Learning Habit Assessment -> Subject Preferences.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 261.00 Tm (4. Dashboard -> Recommendations -> Analytics -> Report.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 240.00 Tm (Teacher/parent flow:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 226.00 Tm (1. Review predicted style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 212.00 Tm (2. Review student input indicators.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 198.00 Tm (3. Review support-check interpretation.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 184.00 Tm (4. Read recommended interventions.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 170.00 Tm (5. Use the report for follow-up planning.) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 139.00 Tm (5. Setup & Installation) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 102.00 Tm (Prerequisites) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 86.00 Tm (- Python 3.9 or later recommended.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 72.00 Tm (- Node.js and npm.) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 2740 >>
+stream
+BT /F1 10 Tf 1 0 0 1 66.00 788.00 Tm (- Modern browser with JavaScript enabled.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- Optional: Firebase project credentials if authentication and Firestore are required.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 747.00 Tm (Backend Installation) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 731.00 Tm (From the project root:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 705.00 Tm (cd backend) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 694.00 Tm (pip install -r requirements.txt) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 671.00 Tm (Run the Flask API:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 645.00 Tm (python api.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 622.00 Tm (The backend runs locally at:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 596.00 Tm (http://127.0.0.1:5000) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 567.00 Tm (Frontend Installation) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 551.00 Tm (From the project root:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 525.00 Tm (cd frontend) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 514.00 Tm (npm install) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 503.00 Tm (npm run dev) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 480.00 Tm (The Vite development server will show the local frontend URL, commonly:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 454.00 Tm (http://localhost:5173) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 425.00 Tm (Environment Variables / Config) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 409.00 Tm (Firebase is optional, but if enabled, create a frontend .env file with:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 383.00 Tm (VITE_FIREBASE_API_KEY=) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 372.00 Tm (VITE_FIREBASE_AUTH_DOMAIN=) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 361.00 Tm (VITE_FIREBASE_PROJECT_ID=) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 350.00 Tm (VITE_FIREBASE_STORAGE_BUCKET=) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 339.00 Tm (VITE_FIREBASE_MESSAGING_SENDER_ID=) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 328.00 Tm (VITE_FIREBASE_APP_ID=) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 317.00 Tm (VITE_FIREBASE_MEASUREMENT_ID=) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 294.00 Tm (If these values are missing, firebaseReady becomes false and Firebase services are not) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 280.00 Tm (initialized.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 253.00 Tm (ML Training Setup) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 237.00 Tm (Install backend/ML dependencies first, then run:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 211.00 Tm (python ml/train_model.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 188.00 Tm (This trains the main Random Forest model and saves:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 162.00 Tm (ml/learning_style_model.pkl) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 151.00 Tm (ml/feature_names.pkl) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 118.00 Tm (6. Code Walkthrough) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 81.00 Tm (Key Files and Roles) Tj ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 3994 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 788.00 Tm (frontend/src/App.jsx) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- Main application file.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 760.00 Tm (- Manages page flow, student state, assessment answers, behavior data, timed tasks, voice) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 746.00 Tm (input, prediction calls, charts, recommendations, analytics, and reports.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 732.00 Tm (- Contains helper functions such as mockPrediction, calculateTextAccuracy,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 718.00 Tm (scoreKeywordRecall, buildFeatureRows, buildBehaviorInsights, buildSupportCheckInsights,) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 704.00 Tm (buildAdaptiveEngine, and buildReportSummary.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 683.00 Tm (frontend/src/firebase.js) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 669.00 Tm (- Reads Firebase configuration from Vite environment variables.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 655.00 Tm (- Initializes Firebase Auth and Firestore only when required config values exist.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 634.00 Tm (frontend/src/styles.css) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 620.00 Tm (- Contains styling for the full frontend interface.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 599.00 Tm (backend/api.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 585.00 Tm (- Main Flask server.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 571.00 Tm (- Loads the trained model from ml/learning_style_model.pkl.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 557.00 Tm (- Defines the REST API endpoints.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 543.00 Tm (- Reads dataset/combined_final_dataset.csv for dataset summary analytics.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 522.00 Tm (ml/train_model.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 508.00 Tm (- Loads the combined dataset.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 494.00 Tm (- Handles missing values.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 480.00 Tm (- One-hot encodes categorical columns.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 466.00 Tm (- Trains a Random Forest classifier.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 452.00 Tm (- Saves the trained model and feature list.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 431.00 Tm (ml/preprocess.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 417.00 Tm (- Fills missing values.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 403.00 Tm (- Encodes categorical features.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 389.00 Tm (- Scales feature values.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 375.00 Tm (- Splits the data into train and test CSV files.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 354.00 Tm (ml/logistic_model.py, ml/svm_model.py, ml/knn_model.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 340.00 Tm (- Train alternative models for comparison.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 326.00 Tm (- Save model artifacts for Logistic Regression, SVM, and KNN.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 305.00 Tm (analysis/feature_importance.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 291.00 Tm (- Trains a Random Forest model and plots feature importance.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 270.00 Tm (analysis/cross_validation.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 256.00 Tm (- Runs 5-fold cross-validation on a Random Forest classifier.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 235.00 Tm (analysis/confusion_matrix.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 221.00 Tm (- Builds a confusion matrix and classification report.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 200.00 Tm (analysis/confidence_analysis.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 186.00 Tm (- Uses predicted class probabilities to analyze confidence.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 159.00 Tm (Important Functions / Logic) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 136.00 Tm (mockPrediction\(answers\)) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 122.00 Tm (- Frontend fallback prediction.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 108.00 Tm (- Compares video, audio, and text activity values.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 94.00 Tm (- Returns Visual, Audio, or Text with a basic confidence score.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 73.00 Tm (calculateTextAccuracy\(target, response\)) Tj ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 18 0 R >>
+endobj
+20 0 obj
+<< /Length 3937 >>
+stream
+BT /F1 10 Tf 1 0 0 1 66.00 788.00 Tm (- Compares typed response characters against the target sentence.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- Used in timed typing support checks.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 753.00 Tm (scoreKeywordRecall\(response, keywords\)) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 739.00 Tm (- Counts how many expected keywords appear in a student's response.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 725.00 Tm (- Used in audio recall and memory-style scoring.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 704.00 Tm (buildBehaviorInsights\(behaviorData\)) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 690.00 Tm (- Converts interaction data into readable behavioral insights.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 676.00 Tm (- Looks at typing level, pauses, corrections, and navigation patterns.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 655.00 Tm (buildSupportCheckInsights\(...\)) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 641.00 Tm (- Combines timed typing, ordering, memory, audio recall, and comprehension task scores.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 627.00 Tm (- Produces support messages and diagnostic notes.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 606.00 Tm (buildAdaptiveEngine\(...\)) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 592.00 Tm (- Creates adaptive interventions based on observed behavior and support-check results.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 578.00 Tm (- Produces student-facing and teacher-facing messages.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 557.00 Tm (analyzeResults\(\)) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 543.00 Tm (- Builds the prediction payload.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 529.00 Tm (- Calls POST http://127.0.0.1:5000/predict.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 515.00 Tm (- Uses backend prediction when available.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 501.00 Tm (- Falls back to mockPrediction\(\) if the backend is unavailable.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 480.00 Tm (predict\(\) in backend/api.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 466.00 Tm (- Receives JSON input.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 452.00 Tm (- Extracts model features in the expected order.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 438.00 Tm (- Converts input into a NumPy array.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 424.00 Tm (- Calls model.predict\(\).) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 410.00 Tm (- Returns the predicted learning style and the features used.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 383.00 Tm (Complex Logic / Algorithms) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 367.00 Tm (- Random Forest classification is the primary ML algorithm.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 353.00 Tm (- Alternative classifiers include Logistic Regression, SVM, and KNN.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 339.00 Tm (- Missing numeric values are filled with mean values.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 325.00 Tm (- Missing categorical values are filled with mode or Unknown.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 311.00 Tm (- Categorical features are encoded using one-hot encoding or label encoding depending on) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 297.00 Tm (the script.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 283.00 Tm (- Frontend adaptive support combines rule-based behavior analysis with ML prediction.) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 252.00 Tm (7. Data Flow) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 215.00 Tm (Input -> Processing -> Output) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 192.00 Tm (Frontend input:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 178.00 Tm (- Student name and ID.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 164.00 Tm (- Account details.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 150.00 Tm (- Questionnaire answers.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 136.00 Tm (- Subject preferences.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 122.00 Tm (- Slider values.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 108.00 Tm (- Voice input.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 94.00 Tm (- Timed task responses.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 80.00 Tm (- Behavior signals such as keystrokes, pauses, backspaces, page visits, media plays, and) Tj ET
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Length 3231 >>
+stream
+BT /F1 10 Tf 1 0 0 1 66.00 788.00 Tm (tool clicks.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 767.00 Tm (Processing:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 753.00 Tm (- Frontend builds a prediction payload.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 739.00 Tm (- Backend extracts expected features.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 725.00 Tm (- Trained ML model predicts learning style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 711.00 Tm (- Frontend combines prediction with behavioral support insights.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 697.00 Tm (- Charts and reports are generated in the frontend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 676.00 Tm (Output:) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 662.00 Tm (- Learning style prediction.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 648.00 Tm (- Confidence score shown in the frontend.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 634.00 Tm (- Personalized learning recommendations.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 620.00 Tm (- Adaptive support messages.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 606.00 Tm (- Analytics charts.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 592.00 Tm (- Parent/teacher report.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 565.00 Tm (Dataset Structure) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 549.00 Tm (Main dataset file:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 523.00 Tm (dataset/combined_final_dataset.csv) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 500.00 Tm (Columns include:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 474.00 Tm (hand_raise) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 463.00 Tm (resource_visits) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 452.00 Tm (announcement_views) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 441.00 Tm (discussion_posts) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 430.00 Tm (free_time) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 419.00 Tm (study_time) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 408.00 Tm (absences) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 397.00 Tm (final_grade) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 386.00 Tm (learning_style) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 375.00 Tm (total_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 364.00 Tm (video_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 353.00 Tm (audio_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 342.00 Tm (text_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 331.00 Tm (platform) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 308.00 Tm (Target column:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 282.00 Tm (learning_style) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 259.00 Tm (Expected prediction features in the Flask API:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 233.00 Tm (hand_raise) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 222.00 Tm (resource_visits) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 211.00 Tm (announcement_views) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 200.00 Tm (discussion_posts) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 189.00 Tm (free_time) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 178.00 Tm (study_time) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 167.00 Tm (absences) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 156.00 Tm (final_grade) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 145.00 Tm (total_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 134.00 Tm (video_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 123.00 Tm (audio_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 112.00 Tm (text_actions) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 101.00 Tm (platform_Unknown) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 72.00 Tm (API Endpoints) Tj ET
+endstream
+endobj
+23 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 22 0 R >>
+endobj
+24 0 obj
+<< /Length 3198 >>
+stream
+BT /F1 10 Tf 1 0 0 1 54.00 788.00 Tm (#### GET /) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 774.00 Tm (Health check endpoint.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 753.00 Tm (Response:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 727.00 Tm (Learning Style Prediction API Running) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 704.00 Tm (#### POST /student-login) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 690.00 Tm (Receives basic student login data.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 669.00 Tm (Request:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 643.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 632.00 Tm (  "student_name": "Student Name",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 621.00 Tm (  "student_id": "STU001") Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 610.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 587.00 Tm (Success response:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 561.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 550.00 Tm (  "message": "Student login received",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 539.00 Tm (  "student": {) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 528.00 Tm (    "student_name": "Student Name",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 517.00 Tm (    "student_id": "STU001") Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 506.00 Tm (  }) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 495.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 472.00 Tm (Validation error:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 446.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 435.00 Tm (  "error": "student_name and student_id are required") Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 424.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 401.00 Tm (#### POST /predict) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 387.00 Tm (Predicts the student's learning style.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 366.00 Tm (Request:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 340.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 329.00 Tm (  "hand_raise": 50,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 318.00 Tm (  "resource_visits": 70,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 307.00 Tm (  "announcement_views": 40,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 296.00 Tm (  "discussion_posts": 30,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 285.00 Tm (  "free_time": 5,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 274.00 Tm (  "study_time": 3,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 263.00 Tm (  "absences": 2,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 252.00 Tm (  "final_grade": 75,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 241.00 Tm (  "total_actions": 180,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 230.00 Tm (  "video_actions": 80,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 219.00 Tm (  "audio_actions": 40,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 208.00 Tm (  "text_actions": 60,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 197.00 Tm (  "platform_Unknown": 0) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 186.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 163.00 Tm (Response:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 137.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 126.00 Tm (  "prediction": "Visual",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 115.00 Tm (  "features_used": {) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 104.00 Tm (    "hand_raise": 50,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 93.00 Tm (    "resource_visits": 70,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 82.00 Tm (    "announcement_views": 40,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 71.00 Tm (    "discussion_posts": 30,) Tj ET
+endstream
+endobj
+25 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 24 0 R >>
+endobj
+26 0 obj
+<< /Length 3240 >>
+stream
+BT /F3 8.5 Tf 1 0 0 1 68.00 788.00 Tm (    "free_time": 5,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 777.00 Tm (    "study_time": 3,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 766.00 Tm (    "absences": 2,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 755.00 Tm (    "final_grade": 75,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 744.00 Tm (    "total_actions": 180,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 733.00 Tm (    "video_actions": 80,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 722.00 Tm (    "audio_actions": 40,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 711.00 Tm (    "text_actions": 60,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 700.00 Tm (    "platform_Unknown": 0) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 689.00 Tm (  }) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 678.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 655.00 Tm (#### POST /behavior-track) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 641.00 Tm (Receives behavior tracking data.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 620.00 Tm (Request:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 594.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 583.00 Tm (  "student_id": "STU001",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 572.00 Tm (  "student_name": "Student Name",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 561.00 Tm (  "behavior_data": {},) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 550.00 Tm (  "support_check": {},) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 539.00 Tm (  "adaptive_engine": {}) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 528.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 505.00 Tm (Response:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 479.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 468.00 Tm (  "message": "Behavior tracking received") Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 457.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 434.00 Tm (#### POST /save-report) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 420.00 Tm (Receives generated report data.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 399.00 Tm (Request:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 373.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 362.00 Tm (  "student_id": "STU001",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 351.00 Tm (  "student_name": "Student Name",) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 340.00 Tm (  "report_summary": {},) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 329.00 Tm (  "behavior_insights": {},) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 318.00 Tm (  "support_check": {},) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 307.00 Tm (  "adaptive_engine": {},) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 296.00 Tm (  "student_snapshot": {}) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 285.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 262.00 Tm (Response:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 236.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 225.00 Tm (  "message": "Report received") Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 214.00 Tm (}) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 191.00 Tm (#### GET /dataset-summary) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 177.00 Tm (Returns aggregate dataset analytics.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 156.00 Tm (Response:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 130.00 Tm ({) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 119.00 Tm (  "total_students": 100,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 108.00 Tm (  "learning_style_distribution": {) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 97.00 Tm (    "Visual": 40,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 86.00 Tm (    "Audio": 30,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 75.00 Tm (    "Text": 30) Tj ET
+endstream
+endobj
+27 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 26 0 R >>
+endobj
+28 0 obj
+<< /Length 3706 >>
+stream
+BT /F3 8.5 Tf 1 0 0 1 68.00 788.00 Tm (  },) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 777.00 Tm (  "average_metrics": {) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 766.00 Tm (    "hand_raise": 45.5,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 755.00 Tm (    "resource_visits": 62.1) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 744.00 Tm (  },) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 733.00 Tm (  "performance_bands": {) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 722.00 Tm (    "high_grade": 30,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 711.00 Tm (    "medium_grade": 50,) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 700.00 Tm (    "low_grade": 20) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 689.00 Tm (  }) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 678.00 Tm (}) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 645.00 Tm (8. Challenges & Solutions) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 608.00 Tm (Challenge 1: Supporting Different Learning Needs) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 592.00 Tm (The project needs to support students who may respond better to visual, audio, or text-based) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 578.00 Tm (learning.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 557.00 Tm (Solution:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 543.00 Tm (The system collects multiple indicators and predicts a learning style. It also provides) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 529.00 Tm (separate recommendation maps for Visual, Audio, and Text learners.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 502.00 Tm (Challenge 2: Combining ML Prediction With Behavioral Support) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 486.00 Tm (Learning style alone does not explain all student needs.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 465.00 Tm (Solution:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 451.00 Tm (The frontend adds behavior tracking and timed support-check tasks. Rule-based insight) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 437.00 Tm (functions convert behavior patterns into practical support suggestions.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 410.00 Tm (Challenge 3: Backend Availability) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 394.00 Tm (The frontend depends on the Flask API for prediction.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 373.00 Tm (Solution:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 359.00 Tm (The frontend includes mockPrediction\(\) as a fallback so the app can still show a result if) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 345.00 Tm (the backend is unavailable.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 318.00 Tm (Challenge 4: Handling Missing Dataset Values) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 302.00 Tm (The dataset contains missing values in some columns.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 281.00 Tm (Solution:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 267.00 Tm (Training scripts fill numeric columns with mean values and categorical columns with mode or) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 253.00 Tm (Unknown.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 226.00 Tm (Challenge 5: Feature Alignment Between Training and Inference) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 210.00 Tm (ML models require prediction-time features to match training-time features.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 189.00 Tm (Solution:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 175.00 Tm (The backend defines a fixed FEATURES list and reads incoming request values in that exact) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 161.00 Tm (order. The training script also saves feature_names.pkl for reference.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 134.00 Tm (Challenge 6: Making Reports Understandable) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 118.00 Tm (ML outputs can be difficult for non-technical users.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 97.00 Tm (Solution:) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 83.00 Tm (The frontend translates raw features and scores into plain-language interpretations for) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 69.00 Tm (parents and teachers.) Tj ET
+endstream
+endobj
+29 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 28 0 R >>
+endobj
+30 0 obj
+<< /Length 3378 >>
+stream
+BT /F2 15 Tf 1 0 0 1 54.00 778.00 Tm (9. Testing) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 741.00 Tm (Test Files / Testing Approach) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 725.00 Tm (The project includes:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 699.00 Tm (backend/test_api.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 688.00 Tm (ml/test_model.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 677.00 Tm (analysis/cross_validation.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 666.00 Tm (analysis/confusion_matrix.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 655.00 Tm (analysis/confidence_analysis.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 632.00 Tm (backend/test_api.py sends a POST request to the prediction endpoint and prints the response.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 611.00 Tm (analysis/cross_validation.py performs 5-fold cross-validation for model evaluation.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 590.00 Tm (analysis/confusion_matrix.py creates a confusion matrix and classification report.) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 569.00 Tm (analysis/confidence_analysis.py checks model probability output for prediction confidence.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 542.00 Tm (How to Run Backend API Test) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 526.00 Tm (First start the backend:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 500.00 Tm (python backend/api.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 477.00 Tm (Then run:) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 451.00 Tm (python backend/test_api.py) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 428.00 Tm (Note: The current backend/test_api.py payload uses older behavioral feature names such as) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 414.00 Tm (typing_speed_wpm and keystroke_delay, while the current backend expects the 13 features) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 400.00 Tm (listed in FEATURES. Updating the test payload to match the backend feature list would make) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 386.00 Tm (the test more accurate.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 359.00 Tm (How to Run ML Evaluation) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 331.00 Tm (python analysis/cross_validation.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 320.00 Tm (python analysis/confusion_matrix.py) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 309.00 Tm (python analysis/confidence_analysis.py) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 280.00 Tm (How to Run Frontend Build Check) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 252.00 Tm (cd frontend) Tj ET
+BT /F3 8.5 Tf 1 0 0 1 68.00 241.00 Tm (npm run build) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 208.00 Tm (10. Future Improvements) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 171.00 Tm (Current Limitations) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 155.00 Tm (- The backend /save-report and /behavior-track endpoints do not persist data yet.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 141.00 Tm (- Firebase is configured, but the app depends on environment variables being supplied.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 127.00 Tm (- The prediction endpoint does not currently return true model probability/confidence.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 113.00 Tm (- The frontend uses fallback confidence when the API does not provide confidence.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 99.00 Tm (- frontend/src/useAdaptiveEngine.js is empty, while adaptive logic currently lives inside) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 85.00 Tm (App.jsx.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 71.00 Tm (- Some ML scripts use slightly different preprocessing approaches, which may create) Tj ET
+endstream
+endobj
+31 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 30 0 R >>
+endobj
+32 0 obj
+<< /Length 2385 >>
+stream
+BT /F1 10 Tf 1 0 0 1 66.00 788.00 Tm (inconsistent model behavior.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 774.00 Tm (- backend/test_api.py does not match the current /predict feature schema.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 760.00 Tm (- No formal unit test suite is configured for the React frontend.) Tj ET
+BT /F2 12 Tf 1 0 0 1 54.00 733.00 Tm (Suggested Enhancements) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 717.00 Tm (- Store behavior logs and reports in Firestore or a backend database.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 703.00 Tm (- Return predict_proba\(\) confidence values from the Flask prediction endpoint.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 689.00 Tm (- Move adaptive support logic into useAdaptiveEngine.js as a reusable hook.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 675.00 Tm (- Add automated tests with pytest for Flask endpoints.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 661.00 Tm (- Add frontend tests using a React testing framework.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 647.00 Tm (- Standardize one preprocessing pipeline for training and inference.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 633.00 Tm (- Add model versioning and metadata.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 619.00 Tm (- Add authentication checks before saving reports.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 605.00 Tm (- Add teacher/admin dashboard for reviewing multiple students.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 591.00 Tm (- Improve accessibility with keyboard navigation audits and screen-reader labels.) Tj ET
+BT /F1 10 Tf 1 0 0 1 66.00 577.00 Tm (- Add export options for reports, such as PDF or printable HTML.) Tj ET
+BT /F2 15 Tf 1 0 0 1 54.00 546.00 Tm (11. Summary) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 515.00 Tm (This project is an adaptive learning system that helps students discover the study format) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 501.00 Tm (that may suit them best. It asks questions, observes learning behavior, runs short support) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 487.00 Tm (tasks, and uses a machine learning model to predict whether the student may benefit most from) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 473.00 Tm (visual, audio, or text-based learning. The app then turns that result into practical) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 459.00 Tm (recommendations, charts, and a parent/teacher report, making the output useful for both) Tj ET
+BT /F1 10 Tf 1 0 0 1 54.00 445.00 Tm (students and the adults supporting them.) Tj ET
+endstream
+endobj
+33 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 32 0 R >>
+endobj
+xref
+0 34
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000212 00000 n 
+0000000282 00000 n 
+0000000357 00000 n 
+0000000425 00000 n 
+0000003910 00000 n 
+0000004056 00000 n 
+0000007546 00000 n 
+0000007692 00000 n 
+0000011954 00000 n 
+0000012102 00000 n 
+0000016456 00000 n 
+0000016604 00000 n 
+0000020894 00000 n 
+0000021042 00000 n 
+0000023835 00000 n 
+0000023983 00000 n 
+0000028030 00000 n 
+0000028178 00000 n 
+0000032168 00000 n 
+0000032316 00000 n 
+0000035600 00000 n 
+0000035748 00000 n 
+0000038999 00000 n 
+0000039147 00000 n 
+0000042440 00000 n 
+0000042588 00000 n 
+0000046347 00000 n 
+0000046495 00000 n 
+0000049926 00000 n 
+0000050074 00000 n 
+0000052512 00000 n 
+trailer
+<< /Size 34 /Root 1 0 R >>
+startxref
+52660
+%%EOF
