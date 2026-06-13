@@ -1,30 +1,59 @@
-# ML-Based Adaptive Learning System for Neurodiverse Students
+# AdaptLearn
 
-## Overview
+AdaptLearn is an ML-based adaptive learning system for neurodiverse students. It predicts a student's preferred learning style and supports adaptive recommendations across visual, audio, and text-based learning.
 
-This project predicts a student's preferred learning style and provides adaptive recommendations for visual, audio, and text-based learning support.
+## Features
+
+- Learning style prediction using trained machine learning models
+- Flask backend API for predictions, student login, behavior tracking, reports, and dataset summaries
+- React + Vite frontend for the user interface
+- Dataset analysis scripts and dashboard utilities
+- Saved ML models for KNN, SVM, logistic regression, and the final learning style model
+
+## Tech Stack
+
+- Frontend: React, Vite, Chart.js, Firebase SDK
+- Backend: Python, Flask, Flask-CORS
+- ML/Data: NumPy, Pandas, scikit-learn, Joblib
 
 ## Project Structure
 
 ```text
 project-folder/
+|-- analysis/   # Analysis scripts and dashboard utilities
+|-- backend/    # Flask API and backend tests
+|-- dataset/    # Training and test datasets
 |-- frontend/   # React + Vite frontend
-|-- backend/    # Flask API
-|-- ml/         # Model training scripts and saved models
-|-- analysis/   # Analysis scripts and generated charts
-|-- dataset/    # CSV datasets
-|-- README
+|-- ml/         # Model training, prediction scripts, and saved models
+|-- README      # Project documentation
 ```
 
-## Run The Project
+## Getting Started
 
-### Backend
+### 1. Clone the repository
 
 ```powershell
-python backend/api.py
+git clone https://github.com/jessicacharlet/adaptlearn.git
+cd adaptlearn
 ```
 
-### Frontend
+### 2. Set up the backend
+
+```powershell
+cd backend
+pip install -r requirements.txt
+python api.py
+```
+
+The backend runs at:
+
+```text
+http://127.0.0.1:5000
+```
+
+### 3. Set up the frontend
+
+Open a second terminal:
 
 ```powershell
 cd frontend
@@ -32,8 +61,71 @@ npm install
 npm run dev
 ```
 
-## API Endpoint
+The Vite development server will show the local frontend URL in the terminal.
+
+## API Endpoints
 
 ```text
-POST http://127.0.0.1:5000/predict
+GET  /
+POST /student-login
+POST /predict
+POST /behavior-track
+POST /save-report
+GET  /dataset-summary
 ```
+
+### Prediction Request Example
+
+```json
+{
+  "hand_raise": 10,
+  "resource_visits": 25,
+  "announcement_views": 5,
+  "discussion_posts": 3,
+  "free_time": 2,
+  "study_time": 4,
+  "absences": 1,
+  "final_grade": 78,
+  "total_actions": 40,
+  "video_actions": 12,
+  "audio_actions": 8,
+  "text_actions": 20,
+  "platform_Unknown": 0
+}
+```
+
+## Firebase and Private Configuration
+
+Firebase configuration, service account files, debug logs, local emulator files, and local `.env` files should not be committed to this repository. These files may contain private project IDs, API keys, service account credentials, or local development data.
+
+The repository includes `.gitignore` rules for:
+
+- `.firebase/`
+- `.firebaserc`
+- `firebase.json`
+- `firestore.rules`
+- `firestore.indexes.json`
+- `storage.rules`
+- Firebase debug logs
+- Firebase service account JSON files
+- Local `.env` files
+
+Use `frontend/.env.example` as the safe template for frontend environment variables. Create your own local `frontend/.env` file when running the project, but do not commit it.
+
+If Firebase credentials were already pushed to GitHub, remove them from the repository and rotate/revoke the exposed credentials in Firebase or Google Cloud.
+
+## Useful Commands
+
+```powershell
+# Check changed files
+git status
+
+# Commit updates
+git add .
+git commit -m "Update project files"
+git push
+```
+
+## License
+
+This project is for academic and learning purposes.
