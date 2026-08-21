@@ -58,10 +58,33 @@ Open a second terminal:
 ```powershell
 cd frontend
 npm install
+```
+
+Create a local environment file from the example template before starting the app:
+
+```powershell
+copy .env.example .env
+```
+
+Then edit the values in `.env` with your real Firebase web app configuration and start the app:
+
+```powershell
 npm run dev
 ```
 
 The Vite development server will show the local frontend URL in the terminal.
+
+> Important: the repository ignores `.env` and `frontend/.env` files so Firebase secrets are never pushed to GitHub. Only `.env.example` is tracked.
+
+### 4. Safe git workflow
+
+```powershell
+git add .
+git commit -m "Update project files"
+git push origin main
+```
+
+If you created a local `.env` file, it will remain on your machine and will not be uploaded because it is listed in `.gitignore`.
 
 ## API Endpoints
 
