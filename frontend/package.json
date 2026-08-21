@@ -4,11 +4,12 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "adaptlearn-project": "file:..",
     "chart.js": "^4.5.0",
     "firebase": "^12.11.0",
     "react": "^19.1.0",

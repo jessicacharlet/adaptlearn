@@ -12,15 +12,34 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+const requiredConfigKeys = ["apiKey", "authDomain", "projectId", "appId"];
+
+const isRealConfigValue = (value) =>
+  typeof value === "string" &&
+  value.trim() &&
+  !value.includes("your_") &&
+  !value.includes("your-");
+
 const hasFirebaseConfig = Boolean(
-  firebaseConfig.apiKey &&
-  firebaseConfig.authDomain &&
-  firebaseConfig.projectId &&
-  firebaseConfig.appId
+  requiredConfigKeys.every((key) => isRealConfigValue(firebaseConfig[key]))
 );
 
-const app = hasFirebaseConfig ? initializeApp(firebaseConfig) : null;
+let app = null;
+let firebaseInitError = "";
 
-export const firebaseReady = hasFirebaseConfig;
+if (hasFirebaseConfig) {
+  try {
+    app = initializeApp(firebaseConfig);
+  } catch (error) {
+    firebaseInitError = error.message;
+  }
+}
+
+export const firebaseReady = Boolean(app);
+export const firebaseConfigError = firebaseInitError || (
+  hasFirebaseConfig
+    ? ""
+    : "Create frontend/.env from frontend/.env.example, add your real Firebase web app values, then restart npm run dev."
+);
 export const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;

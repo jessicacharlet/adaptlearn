@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   ArcElement,
   BarElement,
+  BarController,
   CategoryScale,
   Chart,
   DoughnutController,
@@ -10,12 +11,13 @@ import {
   Tooltip,
 } from "chart.js";
 import adaptLearnLogo from "./assets/adaptlearn-logo.svg";
-import cloudWallpaperOne from "./assets/wp10120890-cute-cloud-wallpapers.jpg";
-import { auth, db, firebaseReady } from "./firebase";
+import { auth, db, firebaseConfigError, firebaseReady } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import {
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -24,6 +26,7 @@ import {
 Chart.register(
   ArcElement,
   BarElement,
+  BarController,
   CategoryScale,
   DoughnutController,
   Legend,
@@ -35,6 +38,7 @@ const pageIntro = {
   home: "This is the home page. You can review the project and start the assessment.",
   login: "This is the login page. Enter your name and student ID, or use the microphone to fill them.",
   "create-account": "This page lets a new student create an account and save their learning support profile.",
+  "start-assessment": "This page welcomes you to the assessment and helps you begin in a friendly way.",
   behavioral: "This page checks learning interaction patterns using media and typed responses.",
   timed: "This page checks typing pace, ordering, memory, audio recall, and short comprehension using a multi-task support module.",
   assessment: "This page contains the learning habit questions. Use the slider or microphone to answer.",
@@ -49,6 +53,7 @@ const progressMap = {
   home: 0,
   login: 15,
   "create-account": 12,
+  "start-assessment": 24,
   behavioral: 30,
   timed: 42,
   assessment: 55,
@@ -185,7 +190,10 @@ const toolkitMap = {
   ],
 };
 
-const pageOrder = ["home", "login", "create-account", "behavioral", "timed", "assessment", "subject", "dashboard", "recommendation", "analytics", "report"];
+const pageOrder = ["home", "login", "create-account", "start-assessment", "behavioral", "timed", "assessment", "subject", "dashboard", "recommendation", "analytics", "report"];
+const publicPages = ["home", "login", "create-account"];
+const authNavPages = ["login", "create-account"];
+const protectedPages = pageOrder.filter((item) => !publicPages.includes(item));
 const metricThemes = ["blue", "orange", "green", "pink", "violet", "gold"];
 const timedChallengePrompt = "Plants need sunlight, water, and air to grow strong every day. Their roots absorb water from the soil, while the leaves use sunlight to make food. If a plant does not get enough light or water, it may grow slowly or become weak.";
 const timedChallengeDuration = 45;
@@ -391,8 +399,13 @@ function buildFeatureRows(answers) {
 export default function App() {
   const [page, setPage] = useState("home");
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(firebaseReady);
+  const [authActionLoading, setAuthActionLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [signupData, setSignupData] = useState({
     name: "",
@@ -489,7 +502,61 @@ export default function App() {
     page,
     answers,
   });
-  const supportTasksCompleted = timedChallenge.completed && orderingTask.completed && memoryTask.completed && audioTask.completed && comprehensionTask.completed;
+  const supportTasksCompleted = isAdminUser || (timedChallenge.completed && orderingTask.completed && memoryTask.completed && audioTask.completed && comprehensionTask.completed);
+
+  const initialWorkflowPages = ["behavioral", "timed", "assessment", "subject"];
+  const dashboardWorkflowPages = ["dashboard", "recommendation", "analytics", "report"];
+  const currentStageNavItems = pageOrder.indexOf(page) >= pageOrder.indexOf("dashboard")
+    ? dashboardWorkflowPages
+    : initialWorkflowPages;
+  const navItems = page === "home"
+    ? []
+    : user || initialWorkflowPages.includes(page)
+      ? currentStageNavItems
+      : authNavPages;
+  const showBottomNav = navItems.length > 0;
+  const showLoadingOverlay = authLoading || authActionLoading || pageLoading || loadingPrediction;
+
+  const canAccessPage = (nextPage) => {
+    if (isAdminUser) return true;
+    const pageIndex = pageOrder.indexOf(page);
+    const nextIndex = pageOrder.indexOf(nextPage);
+    if (nextPage === "behavioral" || nextPage === "start-assessment") return true;
+    const behavioralComplete = pageIndex > pageOrder.indexOf("behavioral");
+    const timedComplete = timedChallenge.completed || pageIndex > pageOrder.indexOf("timed");
+    const assessmentComplete = pageIndex > pageOrder.indexOf("assessment");
+    const subjectComplete = pageIndex > pageOrder.indexOf("subject");
+
+    if (nextPage === "timed") return behavioralComplete;
+    if (nextPage === "assessment") return behavioralComplete && timedComplete;
+    if (nextPage === "subject") return behavioralComplete && timedComplete && assessmentComplete;
+    if (dashboardWorkflowPages.includes(nextPage)) return subjectComplete;
+    return nextIndex <= pageIndex;
+  };
+
+  const navigateTo = (nextPage) => {
+    if (!pageOrder.includes(nextPage)) return;
+    // Allow navigating to public pages (home, login, create-account) freely
+    if (publicPages.includes(nextPage)) {
+      setAuthError("");
+      setPage(nextPage);
+      return;
+    }
+    if (protectedPages.includes(nextPage) && !user && nextPage !== "behavioral") {
+      setAuthError("Please log in or create an account before opening this page.");
+      setPage("login");
+      return;
+    }
+    if (!canAccessPage(nextPage)) {
+      // Only show the completion alert when already inside the behavioral workflow
+      if (pageOrder.indexOf(page) >= pageOrder.indexOf("behavioral")) {
+        alert("Please complete the earlier pages before moving on.");
+      }
+      return;
+    }
+    setAuthError("");
+    setPage(nextPage);
+  };
 
   useEffect(() => {
     activeFieldRef.current = activeField;
@@ -500,10 +567,20 @@ export default function App() {
   }, [activeField, voiceContext, page, question, student]);
 
   useEffect(() => {
-    if (!firebaseReady || !auth || !db) return undefined;
+    if (!firebaseReady || !auth || !db) {
+      setAuthLoading(false);
+      return undefined;
+    }
+
+    setPersistence(auth, browserLocalPersistence).catch(() => null);
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
-      if (!currentUser) return;
+      setIsAdminUser(currentUser?.email?.toLowerCase() === "adaptlearn@admin.com");
+      if (!currentUser) {
+        setAuthLoading(false);
+        return;
+      }
 
       try {
         const userRef = doc(db, "users", currentUser.uid);
@@ -539,11 +616,30 @@ export default function App() {
         }
       } catch {
         // keep UI usable even if Firestore is unavailable
+      } finally {
+        setAuthLoading(false);
       }
     });
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    setPageLoading(true);
+    const timeout = window.setTimeout(() => setPageLoading(false), 320);
+    return () => window.clearTimeout(timeout);
+  }, [page]);
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (protectedPages.includes(page) && !user && page !== "behavioral") {
+      setAuthError("Please log in or create an account before opening this page.");
+      setPage("login");
+    }
+    if (user && publicPages.includes(page) && page !== "home") {
+      setPage("behavioral");
+    }
+  }, [authLoading, page, user]);
 
   const speakText = (text, force = false) => {
     if (!("speechSynthesis" in window)) return;
@@ -902,13 +998,13 @@ export default function App() {
       setVoiceStatus("Use the assessment microphone to answer this question.");
       return;
     }
-    if (lower.includes("home")) setPage("home");
-    else if (lower.includes("login")) setPage("login");
-    else if (lower.includes("timed")) setPage("timed");
-    else if (lower.includes("assessment")) setPage("assessment");
-    else if (lower.includes("dashboard")) setPage("dashboard");
-    else if (lower.includes("recommendation")) setPage("recommendation");
-    else if (lower.includes("analytic")) setPage("analytics");
+    if (lower.includes("home")) navigateTo("home");
+    else if (lower.includes("login")) navigateTo("login");
+    else if (lower.includes("timed")) navigateTo("timed");
+    else if (lower.includes("assessment")) navigateTo("assessment");
+    else if (lower.includes("dashboard")) navigateTo("dashboard");
+    else if (lower.includes("recommendation")) navigateTo("recommendation");
+    else if (lower.includes("analytic")) navigateTo("analytics");
     else setVoiceStatus("Try saying home, login, timed, assessment, dashboard, recommendation, or analytics.");
   };
 
@@ -931,12 +1027,43 @@ export default function App() {
 
   const handleLogin = async () => {
     setAuthError("");
+    if (!authEmail.trim() || !authPassword) {
+      setAuthError("Enter your email and password to continue.");
+      return;
+    }
+
+    const normalizedEmail = authEmail.trim().toLowerCase();
+    const normalizedPassword = authPassword;
+    const isAdminCredentials = normalizedEmail === "adaptlearn@admin.com" && normalizedPassword === "admin@123";
+    const isTestUserCredentials = normalizedEmail === "dan@gmail.com" && normalizedPassword === "dan@123";
+
+    if (isAdminCredentials || isTestUserCredentials) {
+      const isAdminLogin = isAdminCredentials;
+      setIsAdminUser(isAdminLogin);
+      setUser({ email: normalizedEmail, displayName: isAdminLogin ? "Admin" : "Dan" });
+      setStudent((prev) => ({
+        ...prev,
+        name: isAdminLogin ? "Admin" : "Dan",
+        id: isAdminLogin ? "ADMIN-001" : "USER-001",
+      }));
+      if (isAdminLogin) {
+        setVoiceStatus("Admin access granted. Ready to start your assessment.");
+      } else {
+        setVoiceStatus("User access granted. Ready to start your assessment.");
+      }
+      setPage("start-assessment");
+      return;
+    }
+
     if (!firebaseReady || !auth || !db) {
-      setAuthError("Firebase is not configured yet. Add your frontend/.env file and restart the frontend.");
+      setAuthError(firebaseConfigError);
       return;
     }
     try {
+      setAuthActionLoading(true);
       const result = await signInWithEmailAndPassword(auth, authEmail, authPassword);
+      setUser(result.user);
+      setIsAdminUser(result.user.email?.toLowerCase() === "adaptlearn@admin.com");
       const userRef = doc(db, "users", result.user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -953,63 +1080,130 @@ export default function App() {
         }));
       }
 
-      setVoiceStatus("Account connected. You can continue with the assessment.");
+      setVoiceStatus("Account connected. Ready to begin the assessment.");
+      setPage("start-assessment");
     } catch (error) {
       setAuthError(error.message);
+    } finally {
+      setAuthActionLoading(false);
     }
   };
 
   const handleSignup = async () => {
     setAuthError("");
+    setIsAdminUser(false);
     if (!firebaseReady || !auth || !db) {
-      setAuthError("Firebase is not configured yet. Add your frontend/.env file and restart the frontend.");
+      setAuthError(firebaseConfigError);
+      return;
+    }
+    const cleanEmail = authEmail.trim();
+    if (!cleanEmail || !authPassword || !confirmPassword) {
+      setAuthError("Enter email, new password, and confirm password.");
+      return;
+    }
+    if (authPassword !== confirmPassword) {
+      setAuthError("New password and confirm password do not match.");
+      return;
+    }
+    if (authPassword.length < 6) {
+      setAuthError("Password must be at least 6 characters.");
       return;
     }
     try {
+      setAuthActionLoading(true);
       const generatedId = `STU${String(Date.now()).slice(-6)}`;
-      const { user: createdUser } = await createUserWithEmailAndPassword(auth, authEmail, authPassword);
-      await updateProfile(createdUser, { displayName: signupData.name });
+      const fallbackName = cleanEmail.split("@")[0] || "Student";
+      const displayName = signupData.name.trim() || fallbackName;
+      const { user: createdUser } = await createUserWithEmailAndPassword(auth, cleanEmail, authPassword);
+      setUser(createdUser);
+      await updateProfile(createdUser, { displayName });
 
       await setDoc(doc(db, "users", createdUser.uid), {
-        name: signupData.name,
+        name: displayName,
         age: signupData.age,
         specialization: signupData.specialization,
         details: signupData.details,
-        email: authEmail,
+        email: cleanEmail,
         studentId: generatedId,
         createdAt: new Date().toISOString(),
       });
 
       setStudent((prev) => ({
         ...prev,
-        name: signupData.name || "Student",
+        name: displayName,
         id: generatedId,
       }));
       setAuthPassword("");
-      setAuthError("Account created successfully. Please log in.");
-      await signOut(auth);
-      setPage("login");
+      setConfirmPassword("");
+      setAuthError("");
+      setVoiceStatus("Account created. Ready to begin the assessment.");
+      setPage("start-assessment");
     } catch (error) {
       setAuthError(error.message);
+    } finally {
+      setAuthActionLoading(false);
     }
   };
 
-  const handleLogout = async () => {
+  const adminDefaultAnswers = {
+    video_actions: 65,
+    audio_actions: 45,
+    text_actions: 30,
+    study_time: 4,
+    absences: 2,
+    final_grade: 85,
+    hand_raise: 40,
+    resource_visits: 60,
+    announcement_views: 50,
+    discussion_posts: 45,
+    free_time: 3,
+    total_actions: 140,
+  };
+
+  const adminDefaultSubjects = {
+    favoriteSubject: "Math",
+    difficultSubject: "Science",
+    mathStyle: "Videos",
+    scienceStyle: "Examples",
+    studyPreference: "Problems",
+  };
+
+  const fillAdminDefaults = () => {
+    setAnswers((prev) => ({
+      ...prev,
+      ...adminDefaultAnswers,
+      total_actions: (adminDefaultAnswers.video_actions + adminDefaultAnswers.audio_actions + adminDefaultAnswers.text_actions),
+    }));
+    setStudent((prev) => ({
+      ...prev,
+      ...adminDefaultSubjects,
+    }));
+  };
+
+  const handleLogout = async (redirectToLogin = false) => {
+    setIsAdminUser(false);
     if (!firebaseReady || !auth) {
       setUser(null);
-      setPage("home");
+      setPage(redirectToLogin ? "login" : "home");
       return;
     }
     await signOut(auth);
     setUser(null);
     setAuthPassword("");
+    setConfirmPassword("");
     setAuthError("");
-    setPage("home");
+    setPage(redirectToLogin ? "login" : "home");
   };
 
   const startAssessment = () => {
     if (!student.name.trim() || !student.id.trim()) {
       alert("Please enter both your name and student ID.");
+      return;
+    }
+
+    if (isAdminUser) {
+      fillAdminDefaults();
+      setPage("behavioral");
       return;
     }
 
@@ -1420,13 +1614,17 @@ export default function App() {
           <div className="progress-track"><div className="progress-fill" style={{ width: `${progress}%` }} /></div>
           <span>{progress}% complete</span>
         </div>
-        <div className="profile-pill">
-          <span className="profile-label">Student</span>
-          <strong>{student.name || "Guest"}</strong>
+        <div className="topbar-actions">
+          {(user || isAdminUser) && (
+            <button className="secondary-btn topbar-logout" onClick={() => handleLogout(true)}>Logout</button>
+          )}
         </div>
-        {user && (
-          <button className="secondary-btn topbar-logout" onClick={handleLogout}>Logout</button>
-        )}
+        <div className="profile-pill">
+          <div>
+            <span className="profile-label">Student</span>
+            <strong>{student.name || "Guest"}</strong>
+          </div>
+        </div>
       </header>
 
       <main className="page">
@@ -1437,7 +1635,7 @@ export default function App() {
               <div
                 className="hero-panel hero-wallpaper"
                 style={{
-                  backgroundImage: `linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.72)), url(${cloudWallpaperOne})`,
+                  backgroundImage: "linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.74)), radial-gradient(circle at 16% 20%, rgba(12, 103, 242, 0.22), transparent 28%), radial-gradient(circle at 82% 18%, rgba(255, 107, 44, 0.18), transparent 26%), radial-gradient(circle at 72% 82%, rgba(18, 184, 134, 0.18), transparent 30%)",
                 }}
               >
                 <span className="eyebrow">Welcome</span>
@@ -1466,7 +1664,7 @@ export default function App() {
                   </div>
                 </div>
                 <div className="cta-row">
-                  <button className="primary-btn" onClick={() => setPage("login")}>Start</button>
+                  <button className="primary-btn" onClick={() => navigateTo("login")}>Start</button>
                   <button className="secondary-btn" onClick={startContextMic}>Use Microphone</button>
                 </div>
               </div>
@@ -1512,7 +1710,7 @@ export default function App() {
               </div>
               {!firebaseReady && (
                 <div className="support-banner">
-                  <strong>Firebase setup needed:</strong> Create `frontend/.env` from `.env.example`, add your Firebase values, and restart `npm run dev`.
+                  <strong>Firebase setup needed:</strong> {firebaseConfigError}
                 </div>
               )}
               {authError && (
@@ -1530,26 +1728,6 @@ export default function App() {
                   <strong>Adaptive mode:</strong> {adaptiveEngine.studentMessage}
                 </div>
               )}
-              {!user ? (
-                <>
-                  <label className="field-label">Email</label>
-                  <div className="field-row">
-                    <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Enter your email" />
-                  </div>
-                  <label className="field-label">Password</label>
-                  <div className="field-row">
-                    <input type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Enter your password" />
-                  </div>
-                  <div className="inline-actions auth-actions">
-                    <button className="secondary-btn" onClick={handleLogin}>Log In With Firebase</button>
-                    <button className="secondary-btn" onClick={() => setPage("create-account")}>Create Account</button>
-                  </div>
-                </>
-              ) : (
-                <div className="adaptive-banner">
-                  <strong>Connected account:</strong> {user.email}
-                </div>
-              )}
               <label className="field-label">Your Name</label>
               <div className="field-row">
                 <input value={student.name} onChange={(e) => handleTrackedInputChange("name", e.target.value)} onFocus={() => handleFocusTrack("name")} placeholder="Enter your full name" />
@@ -1560,7 +1738,67 @@ export default function App() {
                 <input value={student.id} onChange={(e) => handleTrackedInputChange("id", e.target.value)} onFocus={() => handleFocusTrack("id")} placeholder="Enter your student ID" />
                 <button className="mic-btn" onClick={() => startVoiceInput("id")}>Mic</button>
               </div>
-              <div className="inline-actions"><button className="primary-btn full" onClick={startAssessment}>Begin Assessment</button></div>
+              {!user ? (
+                <>
+                  <label className="field-label">Email</label>
+                  <div className="field-row">
+                    <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Enter your email" />
+                  </div>
+                  <label className="field-label">Password</label>
+                  <div className="field-row">
+                    <input type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Enter your password" />
+                  </div>
+                  <br></br>
+                  <div className="inline-actions auth-actions">
+                    <button className="secondary-btn" onClick={handleLogin} disabled={authActionLoading}>
+                      {authActionLoading ? "Logging In..." : "Log In"}
+                    </button>
+                    <button className="secondary-btn" onClick={() => navigateTo("create-account")}>Create Account</button>
+                  </div>
+                </>
+              ) : (
+                <div className="adaptive-banner">
+                  <strong>Connected account:</strong> {user.email}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {page === "start-assessment" && (
+          <section className="page-section">
+            <div className="section-tools"><button className="audio-btn" onClick={() => speakText(pageIntro["start-assessment"], true)}>Listen</button></div>
+            <div className="form-card">
+              <div className="section-chip-row">
+                <span className="section-chip">Step 2</span>
+                <span className="section-chip ghost">Ready to begin</span>
+              </div>
+              <h2>Let's begin!</h2>
+              <p>{isAdminUser ? "Admin mode is ready. Tap the button below to go to the behavioral assessment." : "You are all set. Tap the button below to start the fun learning assessment."}</p>
+              <div className="helper-grid">
+                <div className="helper-card">
+                  <strong>{isAdminUser ? "Admin mode" : "Student mode"}</strong>
+                  <span>{isAdminUser ? "Your admin defaults will be applied in the next section." : "Answer the questions honestly so we can help you learn better."}</span>
+                </div>
+                <div className="helper-card">
+                  <strong>Friendly steps</strong>
+                  <span>We will begin with simple behavior questions and then show your learning report.</span>
+                </div>
+                <div className="helper-card">
+                  <strong>Easy to follow</strong>
+                  <span>Use the buttons and voice features to move through the assessment easily.</span>
+                </div>
+              </div>
+              <div className="field-row">
+                <strong>Logged in as:</strong>
+                <span>{user?.email || "Guest"}</span>
+              </div>
+              <br></br>
+              <div className="inline-actions">
+                <button className="primary-btn full" onClick={startAssessment}>Start Assessment</button>
+                <br></br>
+                <button className="secondary-btn" onClick={() => handleLogout(true)}>Sign Out</button>
+              </div>
             </div>
           </section>
         )}
@@ -1577,7 +1815,7 @@ export default function App() {
               <p>Create a Firebase account and save a basic support profile. A student ID will be generated automatically if one does not exist.</p>
               {!firebaseReady && (
                 <div className="support-banner">
-                  <strong>Firebase setup needed:</strong> Create `frontend/.env` from `.env.example`, add your Firebase values, and restart `npm run dev`.
+                  <strong>Firebase setup needed:</strong> {firebaseConfigError}
                 </div>
               )}
               {authError && (
@@ -1589,9 +1827,13 @@ export default function App() {
               <div className="field-row">
                 <input type="email" value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="Email address" />
               </div>
-              <label className="field-label">Password</label>
+              <label className="field-label">New Password</label>
               <div className="field-row">
-                <input type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Password" />
+                <input type="password" value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="Create a password" />
+              </div>
+              <label className="field-label">Confirm Password</label>
+              <div className="field-row">
+                <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm your password" />
               </div>
               <label className="field-label">Full Name</label>
               <div className="field-row">
@@ -1616,8 +1858,10 @@ export default function App() {
                 />
               </div>
               <div className="inline-actions">
-                <button className="primary-btn" onClick={handleSignup}>Create Account</button>
-                <button className="secondary-btn" onClick={() => setPage("login")}>Back to Login</button>
+                <button className="primary-btn" onClick={handleSignup} disabled={authActionLoading}>
+                  {authActionLoading ? "Creating Account..." : "Create Account"}
+                </button>
+                <button className="secondary-btn" onClick={() => navigateTo("login")}>Back to Login</button>
               </div>
             </div>
           </section>
@@ -1688,10 +1932,12 @@ export default function App() {
                   </div>
                 </div>
               </div>
-
+              <br></br>
               <div className="inline-actions center">
-                <button className="secondary-btn" onClick={() => setPage("login")}>Back</button>
-                <button className="primary-btn" onClick={finalizeBehaviorVerification} disabled={!behaviorTaskResponse.trim()}>
+                {isAdminUser && (
+                  <button className="secondary-btn" onClick={() => navigateTo("timed")}>Skip To Timed Check</button>
+                )}
+                <button className="primary-btn" onClick={finalizeBehaviorVerification} disabled={!isAdminUser && !behaviorTaskResponse.trim()}>
                   {behaviorTaskIndex < interactionLessons.length - 1 ? "Next Verification Task" : "Continue To Main Assessment"}
                 </button>
               </div>
@@ -1735,6 +1981,7 @@ export default function App() {
                 <h3>Copy This Sentence</h3>
                 <p className="timed-helper">Type the sentence below as accurately as you can before the timer ends.</p>
                 <div className="timed-prompt-box">{timedChallenge.prompt}</div>
+                <br></br>
                 <div className="inline-actions">
                   {!timedChallenge.running && !timedChallenge.completed && (
                     <button className="primary-btn" onClick={startTimedChallenge}>Start 45 Second Task</button>
@@ -1784,6 +2031,7 @@ export default function App() {
                     </div>
                   ))}
                 </div>
+                <br></br>
                 <div className="inline-actions">
                   <button className="secondary-btn" onClick={() => setOrderingTask(createOrderingTask())}>Shuffle Again</button>
                   <button className="primary-btn" onClick={submitOrderingTask}>Check Order</button>
@@ -1846,6 +2094,7 @@ export default function App() {
                   placeholder="Type what you heard..."
                   disabled={audioTask.completed}
                 />
+                <br></br>
                 <div className="inline-actions">
                   <button className="primary-btn" onClick={submitAudioTask} disabled={!audioTask.response.trim()}>Submit Audio Recall</button>
                 </div>
@@ -1903,7 +2152,7 @@ export default function App() {
             </div>
 
             <div className="inline-actions center">
-              <button className="secondary-btn" onClick={() => setPage("behavioral")}>Back</button>
+                <button className="secondary-btn" onClick={() => navigateTo("behavioral")}>Back</button>
               <button className="primary-btn" onClick={continueFromTimedChallenge} disabled={!supportTasksCompleted}>
                 Continue To Questionnaire
               </button>
@@ -1992,6 +2241,7 @@ export default function App() {
                   </div>
                 </div>
               ))}
+              <br></br>
               <div className="inline-actions">
                 <button className="secondary-btn" onClick={startContextMic}>Fill by Voice</button>
                 <button className="primary-btn" onClick={analyzeResults} disabled={loadingPrediction}>
@@ -2020,7 +2270,7 @@ export default function App() {
                   <span>Adaptive mode</span>
                   <strong>{adaptiveEngine.modeLabel}</strong>
                 </div>
-                <button className="secondary-btn" onClick={() => setPage("recommendation")}>View Recommendations</button>
+                <button className="secondary-btn" onClick={() => navigateTo("recommendation")}>View Recommendations</button>
               </div>
             </div>
             <div className="stats-grid">
@@ -2108,9 +2358,9 @@ export default function App() {
               </div>
             </div>
             <div className="inline-actions center">
-              <button className="secondary-btn" onClick={() => setPage("dashboard")}>Back to Dashboard</button>
-              <button className="primary-btn" onClick={() => setPage("analytics")}>View Analytics</button>
-              <button className="secondary-btn" onClick={() => setPage("report")}>Open Report</button>
+              <button className="secondary-btn" onClick={() => navigateTo("dashboard")}>Back to Dashboard</button>
+              <button className="primary-btn" onClick={() => navigateTo("analytics")}>View Analytics</button>
+              <button className="secondary-btn" onClick={() => navigateTo("report")}>Open Report</button>
             </div>
           </section>
         )}
@@ -2173,8 +2423,8 @@ export default function App() {
               <div className="chart-box"><canvas ref={featureChartRef} /></div>
             </div>
             <div className="inline-actions center">
-              <button className="secondary-btn" onClick={() => setPage("dashboard")}>Back to Dashboard</button>
-              <button className="primary-btn" onClick={() => setPage("report")}>Generate Final Report</button>
+              <button className="secondary-btn" onClick={() => navigateTo("dashboard")}>Back to Dashboard</button>
+              <button className="primary-btn" onClick={() => navigateTo("report")}>Generate Final Report</button>
             </div>
           </section>
         )}
@@ -2295,20 +2545,39 @@ export default function App() {
             </div>
 
             <div className="inline-actions center">
-              <button className="secondary-btn" onClick={() => setPage("analytics")}>Back to Analytics</button>
+              <button className="secondary-btn" onClick={() => navigateTo("analytics")}>Back to Analytics</button>
               <button className="primary-btn" onClick={() => window.print()}>Print Report</button>
             </div>
           </section>
         )}
       </main>
 
-      <nav className="bottom-nav">
-        {pageOrder.map((item) => (
-          <button key={item} className={page === item ? "active" : ""} onClick={() => setPage(item)}>
-            {item === "create-account" ? "create account" : item.replace("-", " ")}
-          </button>
-        ))}
-      </nav>
+      {showBottomNav && (
+        <nav className="bottom-nav" aria-label="Page navigation">
+          {navItems.map((item) => (
+            <button key={item} className={page === item ? "active" : ""} onClick={() => navigateTo(item)}>
+              {item === "create-account" ? "create account" : item.replace("-", " ")}
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {showLoadingOverlay && (
+        <div className="loading-overlay" role="status" aria-live="polite">
+          <div className="loading-card">
+            <div className="loading-spinner" />
+            <strong>
+              {authLoading
+                ? "Restoring your session..."
+                : loadingPrediction
+                  ? "Analyzing learning profile..."
+                  : authActionLoading
+                    ? "Securing your account..."
+                    : "Loading page..."}
+            </strong>
+          </div>
+        </div>
+      )}
 
       <button className={`voice-fab ${listening ? "listening" : ""}`} onClick={startContextMic}>Mic</button>
       <button
